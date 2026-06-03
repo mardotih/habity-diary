@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Documentacao Tecnica - Diario de Habitos</title>
+<style>
+  @page { margin: 2cm; size: A4; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 11pt;
+    line-height: 1.6;
+    color: #1a1a2e;
+    max-width: 210mm;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  h1 { font-size: 22pt; color: #1a1a2e; border-bottom: 3px solid #6366f1; padding-bottom: 10px; margin: 30px 0 20px; page-break-before: avoid; }
+  h2 { font-size: 16pt; color: #4f46e5; margin: 25px 0 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; page-break-before: avoid; }
+  h3 { font-size: 13pt; color: #6366f1; margin: 20px 0 10px; }
+  h4 { font-size: 11pt; color: #1a1a2e; margin: 15px 0 8px; }
+  p { margin: 8px 0; }
+  pre {
+    background: #1e1e2e; color: #cdd6f4; padding: 12px; border-radius: 6px;
+    font-family: 'Cascadia Code', 'Fira Code', monospace; font-size: 9pt;
+    overflow-x: auto; margin: 10px 0; line-height: 1.4;
+  }
+  code { font-family: 'Cascadia Code', 'Fira Code', monospace; font-size: 9.5pt; background: #f1f5f9; padding: 1px 4px; border-radius: 3px; }
+  pre code { background: transparent; padding: 0; }
+  table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 10pt; page-break-inside: avoid; }
+  th, td { border: 1px solid #cbd5e1; padding: 6px 10px; text-align: left; }
+  th { background: #6366f1; color: white; font-weight: 600; }
+  tr:nth-child(even) { background: #f8fafc; }
+  ul, ol { margin: 8px 0 8px 25px; }
+  li { margin: 4px 0; }
+  hr { border: none; border-top: 1px solid #e2e8f0; margin: 30px 0; }
+  .cover {
+    text-align: center; padding: 80px 0; page-break-after: always;
+  }
+  .cover h1 { font-size: 28pt; border: none; margin-bottom: 10px; }
+  .cover .subtitle { font-size: 16pt; color: #6366f1; margin-bottom: 30px; }
+  .cover .meta { font-size: 11pt; color: #64748b; }
+  .toc { page-break-after: always; }
+  .toc h2 { border: none; }
+  .toc ul { list-style: none; margin-left: 0; }
+  .toc li { margin: 6px 0; }
+  .toc a { color: #4f46e5; text-decoration: none; }
+  .section { page-break-inside: avoid; }
+  @media print {
+    body { padding: 0; }
+    pre { white-space: pre-wrap; word-break: break-word; }
+    table { font-size: 9pt; }
+    h2, h3 { page-break-after: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <h1>Diario de Habitos</h1>
+  <div class="subtitle">Documentacao Tecnica</div>
+  <div class="meta">
+    <p>Versao: 1.0.0</p>
+    <p>Data: Junho 2026</p>
+  </div>
+</div>
+
+<div class="toc">
+<h2>Indice</h2>
+<ul>
+  <li><a href="#s1">1. Arquitetura do Sistema</a>
+    <ul>
+      <li><a href="#s1.1">1.1 Visao Geral</a></li>
+      <li><a href="#s1.2">1.2 Camadas da Arquitetura</a></li>
+      <li><a href="#s1.3">1.3 Fluxo de Dados</a></li>
+    </ul>
+  </li>
+  <li><a href="#s2">2. Modelo Entidade-Relacao</a>
+    <ul>
+      <li><a href="#s2.1">2.1 Diagrama</a></li>
+      <li><a href="#s2.2">2.2 Dicionario de Dados</a></li>
+      <li><a href="#s2.3">2.3 Relacionamentos</a></li>
+      <li><a href="#s2.4">2.4 Indices</a></li>
+    </ul>
+  </li>
+  <li><a href="#s3">3. Seguranca</a></li>
+  <li><a href="#s4">4. API REST</a></li>
+  <li><a href="#s5">5. Scheduler de Lembretes</a></li>
+  <li><a href="#s6">6. Consideracoes de Desempenho</a></li>
+  <li><a href="#s7">7. Variaveis de Ambiente</a></li>
+  <li><a href="#s8">8. Tecnologias e Versoes</a></li>
+  <li><a href="#s9">9. Fluxo de Navegacao</a></li>
+  <li><a href="#s10">10. Estrategia de Deploy</a></li>
+</ul>
+</div>
+
+<h1 id="s1">1. Arquitetura do Sistema</h1>
+
+<h2 id="s1.1">1.1 Visao Geral</h2>
+
+<p>O sistema segue uma arquitetura <strong>monolitica modular</strong> de tres camadas (3-tier architecture), com separacao clara entre apresentacao, logica de negocio e persistencia de dados:</p>
+
+<pre>
++------------------------------------------------------------------+
+|                        CLIENTE (Browser)                         |
+|  +------------------------------------------------------------+  |
+|  |              SPA React + Vite + Tailwind CSS               |  |
+|  |  +------------+ +-----------+ +----------+ +------------+  |  |
+|  |  | Paginas    | | Contexto  | | Servicos | | Componentes |  |  |
+|  |  | (8 paginas)| | (Auth)    | | (Axios)  | | (Layout)    |  |  |
+|  |  +------------+ +-----------+ +----------+ +------------+  |  |
+|  +------------------------------------------------------------+  |
++------------------------------------------------------------------+
+    |  HTTP REST (JSON, JWT em Header Authorization: Bearer)
+    v
++------------------------------------------------------------------+
+|                     API SERVER (Node.js + Express)                |
+|  +------------------------------------------------------------+  |
+|  |  Middleware Layer: Helmet | CORS | Rate Limit | Morgan     |  |
+|  +------------------------------------------------------------+  |
+|  |  Router Layer: /api/auth | /api/habits | /api/reminders    |  |
+|  |                 /api/admin | /api/health                    |  |
+|  +------------------------------------------------------------+  |
+|  |  Controller Layer: Auth | Habit | Reminder | Admin         |  |
+|  +------------------------------------------------------------+  |
+|  |  Utils Layer: Reminder Scheduler (node-cron)               |  |
+|  +------------------------------------------------------------+  |
+|  |  Data Access: pg Pool (conexao PostgreSQL)                 |  |
+|  +------------------------------------------------------------+  |
++------------------------------------------------------------------+
+    |  TCP 5432
+    v
++------------------------------------------------------------------+
+|                  BASE DE DADOS (PostgreSQL 15)                    |
+|  +------------------------------------------------------------+  |
+|  |  Tabelas: users | habits | habit_completions | reminders   |  |
+|  |  Indices: idx_habits_user_id | idx_completions_habit_id    |  |
+|  |           idx_completions_user_date | idx_reminders_user_id |  |
+|  +------------------------------------------------------------+  |
++------------------------------------------------------------------+
+</pre>
+
+<h2 id="s1.2">1.2 Camadas da Arquitetura</h2>
+
+<h3>Camada de Apresentacao (Frontend - React SPA)</h3>
+
+<p><strong>Tecnologias:</strong> React 18, Vite, Tailwind CSS, Recharts, React Router v6, Axios</p>
+
+<p><strong>Estrutura de Componentes:</strong></p>
+
+<pre>
+src/
+  main.jsx              -> Ponto de entrada, renderiza App
+  App.jsx               -> Router principal (6 rotas publicas/privadas)
+  index.css             -> Estilos globais + Tailwind
+  context/
+    AuthContext.jsx      -> Estado global de autenticacao (React Context)
+  components/
+    Layout.jsx           -> Layout padrao com navegacao lateral
+  pages/
+    LoginPage.jsx        -> Pagina de autenticacao
+    RegisterPage.jsx     -> Registo de novos utilizadores
+    DashboardPage.jsx    -> Pagina inicial apos login
+    HabitsPage.jsx       -> CRUD de habitos
+    StatsPage.jsx        -> Graficos e estatisticas
+    RemindersPage.jsx    -> Gestao de lembretes
+    AdminPage.jsx        -> Painel de administracao
+    ProfilePage.jsx      -> Edicao de perfil
+  services/
+    api.js               -> Camada Axios com interceptors
+</pre>
+
+<p><strong>Mecanismo de Autenticacao:</strong></p>
+<p>O <code>AuthContext</code> gerencia o estado global do utilizador autenticado:</p>
+<ol>
+  <li>O token JWT e armazenado no <code>localStorage</code> (chave: <code>hd_token</code>)</li>
+  <li>Os dados do utilizador sao armazenados no <code>localStorage</code> (chave: <code>hd_user</code>)</li>
+  <li>O interceptor do Axios adiciona automaticamente o header <code>Authorization: Bearer &lt;token&gt;</code></li>
+  <li>Se a API devolver 401, o interceptor limpa o <code>localStorage</code> e redireciona para <code>/login</code></li>
+</ol>
+
+<p><strong>Sistema de Rotas:</strong></p>
+<ul>
+  <li><code>PublicRoute</code>: apenas acessivel sem autenticacao (login/register)</li>
+  <li><code>PrivateRoute</code>: exige autenticacao, redireciona para /login se nao autenticado</li>
+  <li><code>AdminRoute</code>: exige role=admin, redireciona para /dashboard se nao for admin</li>
+</ul>
+
+<h3>Camada de Logica (Backend - Node.js + Express)</h3>
+
+<p><strong>Tecnologias:</strong> Node.js, Express, JWT, bcryptjs, express-validator, node-cron, helmet, cors</p>
+
+<p><strong>Estrutura:</strong></p>
+
+<pre>
+src/
+  server.js              -> Entry point, middlewares, rotas
+  config/
+    database.js          -> Pool de conexoes PostgreSQL (pg)
+  controllers/
+    authController.js    -> Registo, login, perfil
+    habitController.js   -> CRUD habitos + check-in + estatisticas
+    reminderController.js-> CRUD lembretes
+    adminController.js   -> Dashboard admin, gestao utilizadores
+  middleware/
+    auth.js              -> authenticate (JWT) + requireAdmin (role check)
+  routes/
+    auth.js              -> Rotas de autenticacao
+    habits.js            -> Rotas de habitos
+    reminders.js         -> Rotas de lembretes
+    admin.js             -> Rotas de administracao
+  utils/
+    scheduler.js         -> Agendador de lembretes (node-cron)
+</pre>
+
+<p><strong>Fluxo de um Pedido HTTP:</strong></p>
+
+<pre>
+Request HTTP
+  -> Helmet (headers seguros)
+  -> CORS (origem permitida)
+  -> Rate Limiter (200 req/15min)
+  -> express.json() (parse body)
+  -> Morgan (logging)
+  -> Router match: /api/habits/...
+  -> authenticate middleware (verificacao JWT)
+  -> Controller (logica de negocio)
+  -> database.js: pool.query(SQL)
+  -> Response JSON
+  <- 404 se rota nao existir
+  <- 500 se erro nao tratado
+</pre>
+
+<h3>Camada de Dados (PostgreSQL)</h3>
+<p><strong>Tecnologia:</strong> PostgreSQL 15 com driver <code>pg</code> (Node.js)</p>
+<p>A conexao e gerida atraves de um <code>Pool</code> de 10 conexoes maximas, com timeout de 2s para conexao e 30s para idle.</p>
+
+<h2 id="s1.3">1.3 Fluxo de Dados - Exemplo (Criar Habito)</h2>
+
+<pre>
+1. Utilizador preenche formulario "Criar Habito" no frontend
+2. HabitsPage.jsx chama habitsApi.create(data)
+3. api.js interceptor adiciona token JWT ao header
+4. Axios faz POST para http://localhost:4000/api/habits
+5. Express route match: POST /api/habits
+6. auth.js: verify JWT -> req.user = { id, name, email, role }
+7. habitController.createHabit:
+   a. validationResult(req) - valida campos
+   b. INSERT INTO habits (...) VALUES (...) RETURNING *
+   c. Responde 201 com o habito criado
+8. Frontend recebe resposta, atualiza estado local
+9. Pagina mostra o novo habito na lista
+</pre>
+
+<hr>
+
+<h1 id="s2">2. Modelo Entidade-Relacao</h1>
+
+<h2 id="s2.1">2.1 Diagrama Entidade-Relacao</h2>
+
+<pre>
++-------------------+          +----------------------+          +------------------------+
+|      USERS        |          |       HABITS         |          |   HABIT_COMPLETIONS    |
++-------------------+          +----------------------+          +------------------------+
+| PK id: SERIAL     |--+       | PK id: SERIAL        |--+       | PK id: SERIAL          |
+| name: VARCHAR(100)|  |       | FK user_id: INTEGER  |  +------>| FK habit_id: INTEGER   |
+| email: VARCHAR(150|  +------>| title: VARCHAR(200)  |          | FK user_id: INTEGER    |
+| password_hash:    |          | description: TEXT     |          | completed_date: DATE   |
+|   VARCHAR(255)    |          | icon: VARCHAR(10)     |          | note: TEXT             |
+| role: VARCHAR(20) |          | color: VARCHAR(7)     |          | created_at: TIMESTAMP  |
+| avatar_color:     |          | frequency: VARCHAR(20)|          +------------------------+
+|   VARCHAR(7)      |          | target_days: SMALLINT |          | UNIQUE(habit_id,       |
+| is_active: BOOLEAN|          | is_active: BOOLEAN    |          |        completed_date) |
+| created_at:       |          | created_at: TIMESTAMP  |          +------------------------+
+|   TIMESTAMP       |          | updated_at: TIMESTAMP  |
+| updated_at:       |          +----------------------+          +------------------------+
+|   TIMESTAMP       |          |  INDICES              |          |      REMINDERS          |
++-------------------+          |  idx_habits_user_id   |          +------------------------+
+|  INDICES          |          +----------------------+          | PK id: SERIAL           |
+|  (PK por id)      |                                           | FK user_id: INTEGER     |
+|  UNIQUE(email)    |                                           | FK habit_id: INTEGER    |
++-------------------+                                           |   (nullable)            |
+                                                                | label: VARCHAR(200)     |
+                                                                | reminder_time: TIME     |
+                                                                | days_of_week: VARCHAR   |
+                                                                | is_active: BOOLEAN      |
+                                                                | last_triggered: TIMESTAMP|
+                                                                | created_at: TIMESTAMP   |
+                                                                +------------------------+
+                                                                |  INDICES                |
+                                                                |  idx_reminders_user_id  |
+                                                                +------------------------+
+</pre>
+
+<h2 id="s2.2">2.2 Dicionario de Dados</h2>
+
+<h3>Tabela: users</h3>
+<table>
+  <tr><th>Coluna</th><th>Tipo</th><th>Restricoes</th><th>Descricao</th></tr>
+  <tr><td>id</td><td>SERIAL</td><td>PK</td><td>Identificador unico do utilizador</td></tr>
+  <tr><td>name</td><td>VARCHAR(100)</td><td>NOT NULL</td><td>Nome completo do utilizador</td></tr>
+  <tr><td>email</td><td>VARCHAR(150)</td><td>UNIQUE, NOT NULL</td><td>Email (usado para login)</td></tr>
+  <tr><td>password_hash</td><td>VARCHAR(255)</td><td>NOT NULL</td><td>Hash bcrypt da senha (10 rounds)</td></tr>
+  <tr><td>role</td><td>VARCHAR(20)</td><td>NOT NULL, DEFAULT 'user', CHECK IN ('user','admin')</td><td>Nivel de acesso</td></tr>
+  <tr><td>avatar_color</td><td>VARCHAR(7)</td><td>DEFAULT '#6366f1'</td><td>Cor do avatar em hex</td></tr>
+  <tr><td>is_active</td><td>BOOLEAN</td><td>DEFAULT TRUE</td><td>Conta activa ou desactivada</td></tr>
+  <tr><td>created_at</td><td>TIMESTAMP</td><td>DEFAULT NOW()</td><td>Data de criacao da conta</td></tr>
+  <tr><td>updated_at</td><td>TIMESTAMP</td><td>DEFAULT NOW()</td><td>Data da ultima actualizacao</td></tr>
+</table>
+
+<h3>Tabela: habits</h3>
+<table>
+  <tr><th>Coluna</th><th>Tipo</th><th>Restricoes</th><th>Descricao</th></tr>
+  <tr><td>id</td><td>SERIAL</td><td>PK</td><td>Identificador unico do habito</td></tr>
+  <tr><td>user_id</td><td>INTEGER</td><td>FK -> users(id), NOT NULL, ON DELETE CASCADE</td><td>Utilizador dono do habito</td></tr>
+  <tr><td>title</td><td>VARCHAR(200)</td><td>NOT NULL</td><td>Titulo do habito</td></tr>
+  <tr><td>description</td><td>TEXT</td><td>-</td><td>Descricao opcional</td></tr>
+  <tr><td>icon</td><td>VARCHAR(10)</td><td>DEFAULT '?'</td><td>Emoji representativo</td></tr>
+  <tr><td>color</td><td>VARCHAR(7)</td><td>DEFAULT '#6366f1'</td><td>Cor do cartao do habito</td></tr>
+  <tr><td>frequency</td><td>VARCHAR(20)</td><td>NOT NULL, DEFAULT 'daily', CHECK IN ('daily','weekly')</td><td>Frequencia</td></tr>
+  <tr><td>target_days</td><td>SMALLINT</td><td>DEFAULT 7</td><td>Dias/meta por periodo</td></tr>
+  <tr><td>is_active</td><td>BOOLEAN</td><td>DEFAULT TRUE</td><td>Habito activo ou removido (soft delete)</td></tr>
+  <tr><td>created_at</td><td>TIMESTAMP</td><td>DEFAULT NOW()</td><td>Data de criacao</td></tr>
+  <tr><td>updated_at</td><td>TIMESTAMP</td><td>DEFAULT NOW()</td><td>Data da ultima actualizacao</td></tr>
+</table>
+
+<h3>Tabela: habit_completions</h3>
+<table>
+  <tr><th>Coluna</th><th>Tipo</th><th>Restricoes</th><th>Descricao</th></tr>
+  <tr><td>id</td><td>SERIAL</td><td>PK</td><td>Identificador unico da conclusao</td></tr>
+  <tr><td>habit_id</td><td>INTEGER</td><td>FK -> habits(id), NOT NULL, ON DELETE CASCADE</td><td>Habito concluido</td></tr>
+  <tr><td>user_id</td><td>INTEGER</td><td>FK -> users(id), NOT NULL, ON DELETE CASCADE</td><td>Utilizador que concluiu</td></tr>
+  <tr><td>completed_date</td><td>DATE</td><td>NOT NULL</td><td>Data da conclusao (apenas data)</td></tr>
+  <tr><td>note</td><td>TEXT</td><td>-</td><td>Nota opcional sobre a conclusao</td></tr>
+  <tr><td>created_at</td><td>TIMESTAMP</td><td>DEFAULT NOW()</td><td>Momento do registo</td></tr>
+</table>
+<p><strong>Restricao Unica:</strong> <code>(habit_id, completed_date)</code> - um habito so pode ser concluido uma vez por dia</p>
+
+<h3>Tabela: reminders</h3>
+<table>
+  <tr><th>Coluna</th><th>Tipo</th><th>Restricoes</th><th>Descricao</th></tr>
+  <tr><td>id</td><td>SERIAL</td><td>PK</td><td>Identificador unico do lembrete</td></tr>
+  <tr><td>user_id</td><td>INTEGER</td><td>FK -> users(id), NOT NULL, ON DELETE CASCADE</td><td>Utilizador dono do lembrete</td></tr>
+  <tr><td>habit_id</td><td>INTEGER</td><td>FK -> habits(id), ON DELETE CASCADE, NULLABLE</td><td>Habito associado (opcional)</td></tr>
+  <tr><td>label</td><td>VARCHAR(200)</td><td>-</td><td>Texto descritivo do lembrete</td></tr>
+  <tr><td>reminder_time</td><td>TIME</td><td>NOT NULL</td><td>Hora do dia para disparar</td></tr>
+  <tr><td>days_of_week</td><td>VARCHAR(20)</td><td>DEFAULT '1,2,3,4,5,6,7'</td><td>Dias da semana (1=domingo)</td></tr>
+  <tr><td>is_active</td><td>BOOLEAN</td><td>DEFAULT TRUE</td><td>Lembrete activo</td></tr>
+  <tr><td>last_triggered</td><td>TIMESTAMP</td><td>-</td><td>Ultimo disparo do lembrete</td></tr>
+  <tr><td>created_at</td><td>TIMESTAMP</td><td>DEFAULT NOW()</td><td>Data de criacao</td></tr>
+</table>
+
+<h2 id="s2.3">2.3 Relacionamentos</h2>
+
+<pre>
+users (1) ---< (N) habits
+  FK: habits.user_id -> users.id
+
+users (1) ---< (N) habit_completions
+  FK: habit_completions.user_id -> users.id
+
+habits (1) ---< (N) habit_completions
+  FK: habit_completions.habit_id -> habits.id
+  Restricao: UNIQUE(habit_id, completed_date)
+
+users (1) ---< (N) reminders
+  FK: reminders.user_id -> users.id
+
+habits (0..1) ---< (N) reminders
+  FK: reminders.habit_id -> habits.id (nullable)
+</pre>
+
+<h2 id="s2.4">2.4 Indices</h2>
+
+<table>
+  <tr><th>Indice</th><th>Tabela</th><th>Coluna(s)</th><th>Tipo</th><th>Objetivo</th></tr>
+  <tr><td>idx_habits_user_id</td><td>habits</td><td>user_id</td><td>B-tree</td><td>Acelerar consultas de habitos por utilizador</td></tr>
+  <tr><td>idx_completions_habit_id</td><td>habit_completions</td><td>habit_id</td><td>B-tree</td><td>Acelerar consultas de conclusoes por habito</td></tr>
+  <tr><td>idx_completions_user_date</td><td>habit_completions</td><td>user_id, completed_date</td><td>B-tree composto</td><td>Acelerar estatisticas por data</td></tr>
+  <tr><td>idx_reminders_user_id</td><td>reminders</td><td>user_id</td><td>B-tree</td><td>Acelerar consultas de lembretes por utilizador</td></tr>
+</table>
+
+<hr>
+
+<h1 id="s3">3. Seguranca</h1>
+
+<h2>3.1 Medidas Implementadas</h2>
+
+<table>
+  <tr><th>Medida</th><th>Implementacao</th><th>Detalhes</th></tr>
+  <tr><td><strong>Hashing de senhas</strong></td><td>bcryptjs, 10 rounds</td><td>Cada senha e salteada com salt unico</td></tr>
+  <tr><td><strong>Autenticacao stateless</strong></td><td>JWT (jsonwebtoken)</td><td>Token com expiracao de 7 dias, assinado com HMAC-SHA256</td></tr>
+  <tr><td><strong>Headers HTTP seguros</strong></td><td>helmet</td><td>XSS Filter, MIME sniffing, X-Frame-Options, etc.</td></tr>
+  <tr><td><strong>CORS</strong></td><td>cors middleware</td><td>Origem restrita ao dominio do frontend</td></tr>
+  <tr><td><strong>Rate Limiting</strong></td><td>express-rate-limit</td><td>200 req/15min global, 20/15min em auth</td></tr>
+  <tr><td><strong>Validacao de inputs</strong></td><td>express-validator</td><td>Sanitizacao e validacao em todas as rotas</td></tr>
+  <tr><td><strong>Controlo de acesso</strong></td><td>middleware requireAdmin</td><td>Rotas admin apenas para role='admin'</td></tr>
+  <tr><td><strong>Soft delete</strong></td><td>is_active=false</td><td>Habitos nao sao apagados fisicamente</td></tr>
+  <tr><td><strong>ON DELETE CASCADE</strong></td><td>PostgreSQL FK</td><td>Integridade referencial na BD</td></tr>
+</table>
+
+<hr>
+
+<h1 id="s4">4. API REST</h1>
+
+<h2>4.1 Formatos de Resposta</h2>
+
+<p><strong>Sucesso (200/201):</strong></p>
+<pre>{
+  "message": "Operacao concluida",
+  "habit": { "id": 1, "title": "Beber agua", ... }
+}</pre>
+
+<p><strong>Erro de Validacao (422):</strong></p>
+<pre>{
+  "errors": [
+    { "msg": "Titulo e obrigatorio", "param": "title", "location": "body" }
+  ]
+}</pre>
+
+<p><strong>Erro de Autenticacao (401):</strong></p>
+<pre>{ "error": "Token de autenticacao em falta." }</pre>
+
+<p><strong>Erro de Autorizacao (403):</strong></p>
+<pre>{ "error": "Acesso restrito a administradores." }</pre>
+
+<p><strong>Erro Interno (500):</strong></p>
+<pre>{ "error": "Erro interno do servidor." }</pre>
+
+<h2>4.2 Autenticacao JWT</h2>
+<ul>
+  <li><strong>Header:</strong> <code>Authorization: Bearer &lt;token&gt;</code></li>
+  <li><strong>Payload:</strong> <code>{ userId: number, role: string, iat: number, exp: number }</code></li>
+  <li><strong>Assinatura:</strong> HMAC-SHA256 com <code>JWT_SECRET</code> do <code>.env</code></li>
+  <li><strong>Expiracao:</strong> 7 dias (configuravel via <code>JWT_EXPIRES_IN</code>)</li>
+</ul>
+
+<hr>
+
+<h1 id="s5">5. Scheduler de Lembretes</h1>
+
+<p>O scheduler executa a cada minuto (<code>node-cron</code>) e:</p>
+<ol>
+  <li>Busca todos os lembretes activos cujo <code>reminder_time</code> corresponde ao minuto actual</li>
+  <li>Verifica se o dia da semana atual esta incluido em <code>days_of_week</code></li>
+  <li>Marca <code>last_triggered</code> com o timestamp actual</li>
+</ol>
+
+<hr>
+
+<h1 id="s6">6. Consideracoes de Desempenho</h1>
+
+<ul>
+  <li><strong>Pool de conexoes:</strong> max 10 conexoes simultaneas ao PostgreSQL</li>
+  <li><strong>Timeout:</strong> 2s para estabelecer conexao, 30s para idle</li>
+  <li><strong>Indices:</strong> 4 indices B-tree nas colunas mais consultadas</li>
+  <li><strong>Frontend:</strong> Vite com HMR para desenvolvimento, build otimizado para producao</li>
+  <li><strong>Rate Limiting:</strong> Previne abuso de API e ataques de forca bruta</li>
+</ul>
+
+<hr>
+
+<h1 id="s7">7. Variaveis de Ambiente</h1>
+
+<h3>Backend (.env)</h3>
+<table>
+  <tr><th>Variavel</th><th>Descricao</th><th>Valor Padrao</th></tr>
+  <tr><td>PORT</td><td>Porta do servidor Express</td><td>4000</td></tr>
+  <tr><td>DB_HOST</td><td>Host do PostgreSQL</td><td>localhost</td></tr>
+  <tr><td>DB_PORT</td><td>Porta do PostgreSQL</td><td>5432</td></tr>
+  <tr><td>DB_NAME</td><td>Nome da base de dados</td><td>habit_diary</td></tr>
+  <tr><td>DB_USER</td><td>Utilizador da BD</td><td>habit_user</td></tr>
+  <tr><td>DB_PASSWORD</td><td>Password da BD</td><td>habit_pass_2024</td></tr>
+  <tr><td>JWT_SECRET</td><td>Chave secreta para assinar JWT</td><td>-</td></tr>
+  <tr><td>JWT_EXPIRES_IN</td><td>Tempo de expiracao do token</td><td>7d</td></tr>
+  <tr><td>FRONTEND_URL</td><td>URL do frontend (CORS)</td><td>http://localhost:5173</td></tr>
+</table>
+
+<h3>Frontend (.env)</h3>
+<table>
+  <tr><th>Variavel</th><th>Descricao</th><th>Valor Padrao</th></tr>
+  <tr><td>VITE_API_URL</td><td>URL base da API</td><td>http://localhost:4000/api</td></tr>
+</table>
+
+<hr>
+
+<h1 id="s8">8. Tecnologias e Versoes</h1>
+
+<table>
+  <tr><th>Tecnologia</th><th>Versao</th><th>Proposito</th></tr>
+  <tr><td>Node.js</td><td>20+</td><td>Runtime do servidor</td></tr>
+  <tr><td>React</td><td>18</td><td>Biblioteca UI</td></tr>
+  <tr><td>Vite</td><td>5+</td><td>Bundler e dev server</td></tr>
+  <tr><td>Tailwind CSS</td><td>3</td><td>Framework CSS</td></tr>
+  <tr><td>Recharts</td><td>2</td><td>Graficos</td></tr>
+  <tr><td>React Router</td><td>6</td><td>Roteamento SPA</td></tr>
+  <tr><td>Axios</td><td>1</td><td>Cliente HTTP</td></tr>
+  <tr><td>Express</td><td>4</td><td>Framework web</td></tr>
+  <tr><td>pg</td><td>8</td><td>Driver PostgreSQL</td></tr>
+  <tr><td>jsonwebtoken</td><td>9</td><td>JWT</td></tr>
+  <tr><td>bcryptjs</td><td>2</td><td>Hashing de senhas</td></tr>
+  <tr><td>express-validator</td><td>7</td><td>Validacao de inputs</td></tr>
+  <tr><td>node-cron</td><td>3</td><td>Agendamento</td></tr>
+  <tr><td>helmet</td><td>7</td><td>Seguranca HTTP</td></tr>
+  <tr><td>cors</td><td>2</td><td>CORS</td></tr>
+  <tr><td>express-rate-limit</td><td>7</td><td>Rate limiting</td></tr>
+  <tr><td>morgan</td><td>1</td><td>HTTP request logging</td></tr>
+  <tr><td>PostgreSQL</td><td>15</td><td>Base de dados</td></tr>
+</table>
+
+<hr>
+
+<h1 id="s9">9. Fluxo de Navegacao (Frontend)</h1>
+
+<pre>
+Utilizador nao autenticado:
+  /login      -> LoginPage
+  /register   -> RegisterPage
+  /*          -> Redirect para /login
+
+Utilizador autenticado (role=user):
+  /dashboard  -> DashboardPage (resumo dos habitos)
+  /habits     -> HabitsPage (CRUD de habitos)
+  /stats      -> StatsPage (graficos e estatisticas)
+  /reminders  -> RemindersPage (gestao de lembretes)
+  /profile    -> ProfilePage (editar perfil)
+  /admin      -> Redirect para /dashboard
+  /*          -> Redirect para /dashboard
+
+Utilizador autenticado (role=admin):
+  Tudo que user tem acesso +
+  /admin      -> AdminPage (dashboard global, gestao utilizadores)
+</pre>
+
+<hr>
+
+<h1 id="s10">10. Estrategia de Deploy</h1>
+
+<h3>Docker (Producao)</h3>
+<pre>servicos:
+  postgres:   Imagem: postgres:15
+  backend:    Dockerfile: Node.js + Express
+  frontend:   Dockerfile: Nginx + build Vite</pre>
+
+<h3>Manual (Desenvolvimento)</h3>
+<ol>
+  <li>PostgreSQL corre nativamente ou em container</li>
+  <li>Backend: <code>node src/server.js</code> (porta 4000)</li>
+  <li>Frontend: <code>npm run dev</code> (porta 5173)</li>
+  <li>Nginx ou proxy reverso pode ser adicionado para producao</li>
+</ol>
+
+</body>
+</html>

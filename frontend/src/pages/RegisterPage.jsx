@@ -32,17 +32,17 @@ export default function RegisterPage() {
     : form.password.length < 10 ? 2 : 3;
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-ink-50">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-ink-50 dark:bg-ink-950">
       <div className="w-full max-w-md animate-slide-up">
         <div className="text-center mb-8">
           <span className="text-4xl streak-fire">📖</span>
-          <h1 className="font-display text-2xl font-bold text-ink-900 mt-3">Criar conta</h1>
-          <p className="text-ink-500 font-body text-sm mt-1">Comece a sua jornada de hábitos hoje</p>
+          <h1 className="font-display text-2xl font-bold text-ink-900 dark:text-ink-100 mt-3">Criar conta</h1>
+          <p className="text-ink-500 dark:text-ink-400 font-body text-sm mt-1">Comece a sua jornada de hábitos hoje</p>
         </div>
 
         <div className="card p-8">
           {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm font-body">
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 dark:bg-red-900/30 dark:border-red-800 dark:text-red-400 text-sm font-body">
               ⚠️ {error}
             </div>
           )}
@@ -86,10 +86,10 @@ export default function RegisterPage() {
             </button>
           </form>
 
-          <div className="mt-6 pt-6 border-t border-ink-100 text-center">
-            <p className="text-sm text-ink-500 font-body">
+          <div className="mt-6 pt-6 border-t border-ink-100 dark:border-ink-800 text-center">
+            <p className="text-sm text-ink-500 dark:text-ink-400 font-body">
               Já tem conta?{' '}
-              <Link to="/login" className="text-sage-600 font-semibold hover:text-sage-500 transition-colors">
+              <Link to="/login" className="text-sage-600 dark:text-sage-400 font-semibold hover:text-sage-500 dark:hover:text-sage-300 transition-colors">
                 Entrar
               </Link>
             </p>

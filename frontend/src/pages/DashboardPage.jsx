@@ -182,6 +182,7 @@ export default function DashboardPage() {
                 <button
                   onClick={() => toggleHabit(habit)}
                   disabled={toggling === habit.id}
+                  role="checkbox" aria-checked={habit.completed_today} aria-label={`Marcar ${habit.title}`}
                   className={`w-10 h-10 rounded-xl border-2 flex items-center justify-center flex-shrink-0
                              transition-all duration-200 active:scale-90 ${
                     habit.completed_today

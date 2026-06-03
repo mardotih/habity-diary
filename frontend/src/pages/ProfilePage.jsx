@@ -38,8 +38,8 @@ export default function ProfilePage() {
       )}
 
       <div>
-        <h1 className="font-display text-3xl font-bold text-ink-900">O meu perfil</h1>
-        <p className="text-ink-400 text-sm font-body mt-1">Gerencie as suas informações pessoais</p>
+        <h1 className="font-display text-3xl font-bold text-ink-900 dark:text-ink-100">O meu perfil</h1>
+        <p className="text-ink-400 dark:text-ink-500 text-sm font-body mt-1">Gerencie as suas informações pessoais</p>
       </div>
 
       {/* Avatar */}
@@ -49,9 +49,9 @@ export default function ProfilePage() {
           {initials}
         </div>
         <div className="text-center">
-          <p className="font-display text-xl font-bold text-ink-900">{user?.name}</p>
-          <p className="text-ink-400 text-sm font-body">{user?.email}</p>
-          <span className={`badge mt-2 ${user?.role === 'admin' ? 'bg-amber-100 text-amber-700' : 'bg-sage-100 text-sage-700'}`}>
+          <p className="font-display text-xl font-bold text-ink-900 dark:text-ink-100">{user?.name}</p>
+          <p className="text-ink-400 dark:text-ink-500 text-sm font-body">{user?.email}</p>
+          <span className={`badge mt-2 ${user?.role === 'admin' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' : 'bg-sage-100 text-sage-700 dark:bg-sage-900/30 dark:text-sage-300'}`}>
             {user?.role === 'admin' ? '👑 Administrador' : '✨ Utilizador'}
           </span>
         </div>
@@ -59,7 +59,7 @@ export default function ProfilePage() {
 
       {/* Edit form */}
       <div className="card p-8">
-        <h2 className="font-display text-lg font-semibold text-ink-900 mb-6">Editar informações</h2>
+        <h2 className="font-display text-lg font-semibold text-ink-900 dark:text-ink-100 mb-6">Editar informações</h2>
         <form onSubmit={submit} className="space-y-5">
           <div>
             <label className="label">Nome completo</label>
@@ -67,12 +67,12 @@ export default function ProfilePage() {
           </div>
           <div>
             <label className="label">Email</label>
-            <input value={user?.email} className="input-field bg-ink-50 cursor-not-allowed" disabled />
-            <p className="text-xs text-ink-400 font-body mt-1">O email não pode ser alterado.</p>
+            <input value={user?.email} className="input-field bg-ink-50 dark:bg-ink-800/50 cursor-not-allowed" disabled />
+            <p className="text-xs text-ink-400 dark:text-ink-500 font-body mt-1">O email não pode ser alterado.</p>
           </div>
 
-          <div className="pt-2 border-t border-ink-100">
-            <h3 className="font-body font-semibold text-ink-800 mb-4">Alterar senha</h3>
+          <div className="pt-2 border-t border-ink-100 dark:border-ink-800">
+            <h3 className="font-body font-semibold text-ink-800 dark:text-ink-200 mb-4">Alterar senha</h3>
             <div className="space-y-4">
               <div>
                 <label className="label">Nova senha (deixe em branco para manter)</label>
@@ -94,9 +94,9 @@ export default function ProfilePage() {
       </div>
 
       {/* Danger zone */}
-      <div className="card p-6 border-red-100">
-        <h2 className="font-display text-lg font-semibold text-red-700 mb-3">Zona de perigo</h2>
-        <p className="text-sm text-ink-500 font-body mb-4">Terminar sessão em todos os dispositivos.</p>
+      <div className="card p-6 border-red-100 dark:border-red-900/50">
+        <h2 className="font-display text-lg font-semibold text-red-700 dark:text-red-400 mb-3">Zona de perigo</h2>
+        <p className="text-sm text-ink-500 dark:text-ink-400 font-body mb-4">Terminar sessão em todos os dispositivos.</p>
         <button onClick={logout} className="btn-danger flex items-center gap-2">
           🚪 Terminar sessão
         </button>

@@ -8,21 +8,44 @@ import HabitCalendar from '../components/HabitCalendar';
 
 const COLORS_PIE = ['#52796f', '#84a98c', '#cad2c5', '#f59e0b', '#6366f1'];
 
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="card px-3 py-2 text-sm font-body border border-ink-200 dark:border-ink-700 shadow-lg">
+        <p className="text-ink-600 dark:text-ink-300 font-semibold">{label}</p>
+        <p className="text-sage-600 dark:text-sage-400">{payload[0].value} check-ins</p>
+      </div>
+    );
+  }
+  return null;
+};
+
 export default function StatsPage() {
   const [stats, setStats] = useState(null);
   const [habits, setHabits] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
+    let cancelled = false;
     Promise.all([habitsApi.stats(), habitsApi.list()])
-      .then(([s, h]) => { setStats(s.data); setHabits(h.data.habits); })
-      .finally(() => setLoading(false));
+      .then(([s, h]) => { if (!cancelled) { setStats(s.data); setHabits(h.data.habits); } })
+      .catch(err => { if (!cancelled) setError(err.message || 'Erro ao carregar estatísticas.'); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
   }, []);
+
+  if (error) return (
+    <div className="flex items-center justify-center h-64">
+      <div className="text-center"><div className="text-4xl mb-3">⚠️</div>
+        <p className="text-ink-400 dark:text-ink-500 font-body text-sm">{error}</p></div>
+    </div>
+  );
 
   if (loading) return (
     <div className="flex items-center justify-center h-64">
       <div className="text-center"><div className="text-4xl mb-3 streak-fire">📊</div>
-        <p className="text-ink-400 font-body text-sm">A carregar estatísticas...</p></div>
+        <p className="text-ink-400 dark:text-ink-500 font-body text-sm">A carregar estatísticas...</p></div>
     </div>
   );
 
@@ -49,18 +72,6 @@ export default function StatsPage() {
 
   const completionRate = habits.length > 0
     ? Math.round((habits.filter(h => h.completed_today).length / habits.length) * 100) : 0;
-
-  const CustomTooltip = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="card px-3 py-2 text-sm font-body border border-ink-200 dark:border-ink-700 shadow-lg">
-          <p className="text-ink-600 dark:text-ink-300 font-semibold">{label}</p>
-          <p className="text-sage-600 dark:text-sage-400">{payload[0].value} check-ins</p>
-        </div>
-      );
-    }
-    return null;
-  };
 
   return (
     <div className="max-w-5xl mx-auto space-y-8 animate-fade-in">

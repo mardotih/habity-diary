@@ -122,7 +122,7 @@ export default function LoginPage() {
             <div className="mt-6 pt-6 border-t border-ink-100 dark:border-ink-800 text-center">
               <p className="text-sm text-ink-500 dark:text-ink-400 font-body">
                 N&atilde;o tem conta?{' '}
-                <Link to="/register" className="text-sage-600 font-semibold hover:text-sage-500 transition-colors">
+                <Link to="/register" className="text-sage-600 dark:text-sage-400 font-semibold hover:text-sage-500 dark:hover:text-sage-300 transition-colors">
                   Criar conta gratuita
                 </Link>
               </p>

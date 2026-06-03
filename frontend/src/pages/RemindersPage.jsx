@@ -16,6 +16,7 @@ export default function RemindersPage() {
   const [form, setForm] = useState(DEFAULT_FORM);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState(null);
+  const [confirmDelete, setConfirmDelete] = useState(null);
 
   const showToast = (msg, type = 'success') => { setToast({ msg, type }); setTimeout(() => setToast(null), 2500); };
 
@@ -66,6 +67,7 @@ export default function RemindersPage() {
       setReminders(prev => prev.filter(r => r.id !== id));
       showToast('Lembrete eliminado.');
     } catch { showToast('Erro ao eliminar.', 'error'); }
+    setConfirmDelete(null);
   };
 
   const formatDays = (str) => {
@@ -139,17 +141,34 @@ export default function RemindersPage() {
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
                 {/* Toggle */}
-                <button onClick={() => toggleActive(r)}
+                <button onClick={() => toggleActive(r)} aria-label={r.is_active ? 'Desactivar lembrete' : 'Activar lembrete'}
+                  role="switch" aria-checked={r.is_active}
                   className={`relative w-11 h-6 rounded-full transition-colors duration-200 focus:outline-none ${r.is_active ? 'bg-sage-500' : 'bg-ink-200'}`}>
                   <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${r.is_active ? 'translate-x-5' : ''}`} />
                 </button>
-                <button onClick={() => deleteReminder(r.id)}
+                <button onClick={() => setConfirmDelete(r)} aria-label="Eliminar lembrete"
                   className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30 text-ink-400 hover:text-red-600 dark:hover:text-red-400 transition-colors text-sm">
                   🗑️
                 </button>
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Confirm Delete Modal */}
+      {confirmDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
+          <div className="absolute inset-0 bg-ink-900/40 backdrop-blur-sm dark:bg-ink-950/60" onClick={() => setConfirmDelete(null)} />
+          <div className="relative card p-8 w-full max-w-sm animate-slide-up text-center">
+            <div className="text-4xl mb-4">🗑️</div>
+            <h3 className="font-display text-xl font-bold text-ink-900 dark:text-ink-100 mb-2">Eliminar lembrete</h3>
+            <p className="text-ink-500 dark:text-ink-400 text-sm font-body mb-6">Tem a certeza? Esta acção não pode ser desfeita.</p>
+            <div className="flex gap-3">
+              <button onClick={() => setConfirmDelete(null)} className="btn-secondary flex-1">Cancelar</button>
+              <button onClick={() => deleteReminder(confirmDelete.id)} className="btn-danger flex-1">Eliminar</button>
+            </div>
+          </div>
         </div>
       )}
 

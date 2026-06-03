@@ -113,11 +113,11 @@ export default function HabitsPage() {
                   <div className="flex items-start justify-between gap-2">
                     <h3 className="font-body font-semibold text-ink-900 dark:text-ink-100 truncate">{habit.title}</h3>
                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
-                      <button onClick={() => openEdit(habit)}
+                      <button onClick={() => openEdit(habit)} aria-label="Editar hábito"
                         className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-ink-100 dark:hover:bg-ink-800 text-ink-400 hover:text-ink-700 dark:hover:text-ink-200 transition-colors text-sm">
                         ✏️
                       </button>
-                      <button onClick={() => setConfirmDelete(habit.id)}
+                      <button onClick={() => setConfirmDelete(habit.id)} aria-label="Eliminar hábito"
                         className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30 text-ink-400 hover:text-red-600 dark:hover:text-red-400 transition-colors text-sm">
                         🗑️
                       </button>
@@ -231,7 +231,7 @@ export default function HabitsPage() {
                 <label className="label">Ícone</label>
                 <div className="flex flex-wrap gap-2">
                   {ICONS.map(icon => (
-                    <button type="button" key={icon} onClick={() => setForm(p => ({ ...p, icon }))}
+                    <button type="button" key={icon} onClick={() => setForm(p => ({ ...p, icon }))} aria-label={`Ícone ${icon}`}
                       className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl transition-all ${
                         form.icon === icon ? 'bg-ink-900 dark:bg-ink-200 shadow-md scale-110' : 'bg-ink-100 hover:bg-ink-200 dark:bg-ink-800 dark:hover:bg-ink-700'
                       }`}>
@@ -245,7 +245,7 @@ export default function HabitsPage() {
                 <label className="label">Cor</label>
                 <div className="flex gap-3 flex-wrap">
                   {COLORS.map(color => (
-                    <button type="button" key={color} onClick={() => setForm(p => ({ ...p, color }))}
+                    <button type="button" key={color} onClick={() => setForm(p => ({ ...p, color }))} aria-label={`Cor ${color}`}
                       style={{ backgroundColor: color }}
                       className={`w-8 h-8 rounded-full transition-all ${form.color === color ? 'ring-2 ring-offset-2 ring-ink-700 scale-110 dark:ring-offset-ink-900' : 'hover:scale-105'}`} />
                   ))}

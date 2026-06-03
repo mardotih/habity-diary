@@ -10,6 +10,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Layout from './components/Layout';
+import ErrorBoundary from './components/ErrorBoundary';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
@@ -18,6 +19,7 @@ import StatsPage from './pages/StatsPage';
 import RemindersPage from './pages/RemindersPage';
 import AdminPage from './pages/AdminPage';
 import ProfilePage from './pages/ProfilePage';
+import NotFoundPage from './pages/NotFoundPage';
 
 // ─── Componente para proteger rotas que precisam de autenticacao ─────────────
 const PrivateRoute = ({ children }) => {
@@ -39,7 +41,15 @@ const PrivateRoute = ({ children }) => {
 
 // ─── Componente para proteger rotas de administrador ─────────────────────────
 const AdminRoute = ({ children }) => {
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, loading } = useAuth();
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="text-center">
+        <div className="text-4xl mb-4 streak-fire">📖</div>
+        <p className="text-ink-500 font-body">A carregar...</p>
+      </div>
+    </div>
+  );
   if (!user) return <Navigate to="/login" replace />;
   if (!isAdmin) return <Navigate to="/dashboard" replace />;
   return children;
@@ -58,33 +68,38 @@ export default function App() {
     // Passo 1: AuthProvider disponibiliza estado de autenticacao a toda a app
     <AuthProvider>
 
-      {/* Passo 2: BrowserRouter gere a navegacao por URL */}
-      <BrowserRouter>
+      {/* Passo 2: ErrorBoundary captura erros nao tratados */}
+      <ErrorBoundary>
 
-        {/* Passo 3: Definicao de todas as rotas */}
-        <Routes>
+        {/* Passo 3: BrowserRouter gere a navegacao por URL */}
+        <BrowserRouter>
 
-          {/* Rotas publicas (so acessiveis se nao estiver logado) */}
-          <Route path="/login"    element={<PublicRoute><LoginPage /></PublicRoute>} />
-          <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
+          {/* Passo 4: Definicao de todas as rotas */}
+          <Routes>
 
-          {/* Rotas privadas (necessitam de autenticacao) */}
-          <Route path="/" element={<PrivateRoute><Layout /></PrivateRoute>}>
-            <Route index element={<Navigate to="/dashboard" replace />} />
-            <Route path="dashboard"  element={<DashboardPage />} />
-            <Route path="habits"     element={<HabitsPage />} />
-            <Route path="stats"      element={<StatsPage />} />
-            <Route path="reminders"  element={<RemindersPage />} />
-            <Route path="profile"    element={<ProfilePage />} />
-            {/* Rota de admin (requer privilegios especiais) */}
-            <Route path="admin"      element={<AdminRoute><AdminPage /></AdminRoute>} />
-          </Route>
+            {/* Rotas publicas (so acessiveis se nao estiver logado) */}
+            <Route path="/login"    element={<PublicRoute><LoginPage /></PublicRoute>} />
+            <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
 
-          {/* Rota fallback: qualquer URL desconhecido redireciona para dashboard */}
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
-        </Routes>
+            {/* Rotas privadas (necessitam de autenticacao) */}
+            <Route path="/" element={<PrivateRoute><Layout /></PrivateRoute>}>
+              <Route index element={<Navigate to="/dashboard" replace />} />
+              <Route path="dashboard"  element={<DashboardPage />} />
+              <Route path="habits"     element={<HabitsPage />} />
+              <Route path="stats"      element={<StatsPage />} />
+              <Route path="reminders"  element={<RemindersPage />} />
+              <Route path="profile"    element={<ProfilePage />} />
+              {/* Rota de admin (requer privilegios especiais) */}
+              <Route path="admin"      element={<AdminRoute><AdminPage /></AdminRoute>} />
+            </Route>
 
-      </BrowserRouter>
+            {/* Rota fallback: mostra pagina 404 personalizada */}
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+
+        </BrowserRouter>
+
+      </ErrorBoundary>
     </AuthProvider>
   );
 }

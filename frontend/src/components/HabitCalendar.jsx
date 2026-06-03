@@ -1,5 +1,13 @@
+import PropTypes from 'prop-types';
+
 function HabitCalendar({ data, months = 6 }) {
-  if (!data || data.length === 0) return null;
+  if (!data || data.length === 0) return (
+    <div className="py-8 text-center">
+      <p className="text-ink-300 dark:text-ink-600 text-sm font-body">
+        Complete hábitos nos últimos meses para ver o seu calendário.
+      </p>
+    </div>
+  );
 
   const today = new Date();
   const startDate = new Date(today);
@@ -91,5 +99,13 @@ function HabitCalendar({ data, months = 6 }) {
     </div>
   );
 }
+
+HabitCalendar.propTypes = {
+  data: PropTypes.arrayOf(PropTypes.shape({
+    completed_date: PropTypes.string,
+    count: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+  })),
+  months: PropTypes.number
+};
 
 export default HabitCalendar;

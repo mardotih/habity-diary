@@ -113,7 +113,7 @@ export default function Layout() {
       {/* Mobile overlay */}
       {mobileOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
-          <div className="absolute inset-0 bg-ink-900/50" onClick={() => setMobileOpen(false)} />
+          <div className="absolute inset-0 bg-ink-900/50" onClick={() => setMobileOpen(false)} aria-label="Fechar menu" role="button" tabIndex={0} />
           <aside className="relative w-64 bg-white dark:bg-ink-900 h-full flex flex-col shadow-xl animate-slide-up">
             <SidebarContent />
           </aside>
@@ -124,7 +124,7 @@ export default function Layout() {
       <main className="flex-1 lg:ml-64">
         {/* Mobile topbar */}
         <div className="lg:hidden sticky top-0 z-20 bg-white dark:bg-ink-900 border-b border-ink-100 dark:border-ink-800 px-4 py-3 flex items-center justify-between">
-          <button onClick={() => setMobileOpen(true)} className="p-2 rounded-lg hover:bg-ink-100">
+          <button onClick={() => setMobileOpen(true)} className="p-2 rounded-lg hover:bg-ink-100" aria-label="Abrir menu">
             <div className="space-y-1">
               <span className="block w-5 h-0.5 bg-ink-900" />
               <span className="block w-5 h-0.5 bg-ink-900" />

@@ -66,7 +66,7 @@ INSERT INTO users (name, email, password_hash, role, avatar_color)
 VALUES (
   'Administrador',
   'admin@habitdiary.com',
-  '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+  '$2a$10$mUuacQn5Wp/g5gCAN5i5bu9kimhjSsdrlVojKqvBKwPV1eorjoZT2',
   'admin',
   '#f59e0b'
 ) ON CONFLICT DO NOTHING;

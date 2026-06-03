@@ -1,0 +1,55 @@
+{
+  "version": "2.0.0",
+  "presentation": {
+    "echo": true,
+    "reveal": "always",
+    "focus": false,
+    "panel": "dedicated"
+  },
+  "tasks": [
+    {
+      "label": "1. Iniciar Base de Dados",
+      "detail": "Verifica se o PostgreSQL esta a correr",
+      "type": "shell",
+      "command": "Get-Service postgresql* | Where-Object { $_.Status -eq 'Running' } | Format-Table Name, Status",
+      "problemMatcher": [],
+      "group": "none"
+    },
+    {
+      "label": "2. Iniciar Backend",
+      "detail": "node src/server.js na porta 4000",
+      "type": "shell",
+      "command": "node",
+      "args": ["src/server.js"],
+      "options": { "cwd": "${workspaceFolder}/backend" },
+      "problemMatcher": [],
+      "group": { "kind": "build", "isDefault": true },
+      "presentation": { "panel": "dedicated", "group": "backend" }
+    },
+    {
+      "label": "3. Iniciar Frontend",
+      "detail": "Vite dev server na porta 5173",
+      "type": "shell",
+      "command": "node_modules/.bin/vite",
+      "args": ["--host", "0.0.0.0", "--port", "5173"],
+      "options": { "cwd": "${workspaceFolder}/frontend" },
+      "problemMatcher": [],
+      "presentation": { "panel": "dedicated", "group": "frontend" }
+    },
+    {
+      "label": "Abrir no browser",
+      "detail": "Abre http://localhost:5173",
+      "type": "shell",
+      "command": "start http://localhost:5173",
+      "problemMatcher": [],
+      "dependsOn": ["2. Iniciar Backend", "3. Iniciar Frontend"]
+    },
+    {
+      "label": "Parar servidores",
+      "detail": "Mata todos os processos node",
+      "type": "shell",
+      "command": "taskkill /f /im node.exe",
+      "problemMatcher": []
+    }
+  ]
+}

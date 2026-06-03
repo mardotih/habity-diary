@@ -90,9 +90,9 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <p className="text-ink-400 font-body text-sm">{greet()},</p>
-          <h1 className="font-display text-3xl font-bold text-ink-900">{user?.name?.split(' ')[0]} 👋</h1>
-          <p className="text-ink-500 text-sm font-body mt-1">
+          <p className="text-ink-400 dark:text-ink-500 font-body text-sm">{greet()},</p>
+          <h1 className="font-display text-3xl font-bold text-ink-900 dark:text-ink-100">{user?.name?.split(' ')[0]} 👋</h1>
+          <p className="text-ink-500 dark:text-ink-400 text-sm font-body mt-1">
             {new Date().toLocaleDateString('pt-PT', { weekday: 'long', day: 'numeric', month: 'long' })}
           </p>
         </div>
@@ -102,26 +102,26 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 card-stagger">
         {[
-          { icon: '✅', value: `${completedCount}/${total}`, label: 'Hoje', color: 'text-sage-600' },
-          { icon: '🔥', value: stats?.best_streak || 0, label: 'Melhor sequência', color: 'text-amber-500' },
-          { icon: '📚', value: stats?.total_habits || 0, label: 'Total hábitos', color: 'text-ink-600' },
-          { icon: '⭐', value: `${pct}%`, label: 'Taxa hoje', color: 'text-ink-600' },
+          { icon: '✅', value: `${completedCount}/${total}`, label: 'Hoje', color: 'text-sage-600 dark:text-sage-400' },
+          { icon: '🔥', value: stats?.best_streak || 0, label: 'Melhor sequência', color: 'text-amber-500 dark:text-amber-400' },
+          { icon: '📚', value: stats?.total_habits || 0, label: 'Total hábitos', color: 'text-ink-600 dark:text-ink-300' },
+          { icon: '⭐', value: `${pct}%`, label: 'Taxa hoje', color: 'text-ink-600 dark:text-ink-300' },
         ].map(card => (
-          <div key={card.label} className="card p-5">
+          <div key={card.label} className="card-hover p-5">
             <div className="text-2xl mb-3">{card.icon}</div>
             <p className={`font-display text-2xl font-bold ${card.color}`}>{card.value}</p>
-            <p className="text-ink-400 text-xs font-body mt-1">{card.label}</p>
+            <p className="text-ink-400 dark:text-ink-500 text-xs font-body mt-1">{card.label}</p>
           </div>
         ))}
       </div>
 
       {/* Progress bar */}
       {total > 0 && (
-        <div className="card p-6">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="font-display text-lg font-semibold text-ink-900">Progresso de hoje</h2>
+          <div className="card-hover p-6">
+            <div className="flex items-center justify-between mb-3">
+            <h2 className="font-display text-lg font-semibold text-ink-900 dark:text-ink-100">Progresso de hoje</h2>
             <span className="font-mono text-sm font-semibold text-sage-600">{pct}%</span>
           </div>
           <div className="h-3 bg-ink-100 rounded-full overflow-hidden">
@@ -139,13 +139,13 @@ export default function DashboardPage() {
       <div className="grid lg:grid-cols-5 gap-6">
         {/* Habits list */}
         <div className="lg:col-span-3 space-y-4">
-          <h2 className="font-display text-xl font-semibold text-ink-900">Hábitos de hoje</h2>
+          <h2 className="font-display text-xl font-semibold text-ink-900 dark:text-ink-100">Hábitos de hoje</h2>
 
           {habits.length === 0 ? (
-            <div className="card p-12 text-center">
+              <div className="card p-12 text-center">
               <div className="text-5xl mb-4">🌱</div>
-              <p className="font-display text-lg font-semibold text-ink-700">Ainda sem hábitos</p>
-              <p className="text-ink-400 text-sm font-body mt-2 mb-6">Comece a construir a sua rotina</p>
+              <p className="font-display text-lg font-semibold text-ink-700 dark:text-ink-300">Ainda sem hábitos</p>
+              <p className="text-ink-400 dark:text-ink-500 text-sm font-body mt-2 mb-6">Comece a construir a sua rotina</p>
               <Link to="/habits" className="btn-primary inline-flex items-center gap-2">
                 <span>+</span> Criar primeiro hábito
               </Link>
@@ -153,8 +153,8 @@ export default function DashboardPage() {
           ) : (
             habits.map((habit, i) => (
               <div key={habit.id}
-                className={`card p-4 flex items-center gap-4 transition-all duration-300 hover:shadow-md animate-slide-up ${
-                  habit.completed_today ? 'border-sage-200 bg-sage-50/30' : ''
+                className={`card-hover p-4 flex items-center gap-4 animate-slide-up ${
+                  habit.completed_today ? 'border-sage-200 bg-sage-50/30 dark:border-sage-700 dark:bg-sage-900/20' : ''
                 }`}
                 style={{ animationDelay: `${i * 60}ms` }}>
 
@@ -170,10 +170,10 @@ export default function DashboardPage() {
 
                 {/* Info */}
                 <div className="flex-1 min-w-0">
-                  <p className={`font-body font-medium text-ink-900 truncate ${habit.completed_today ? 'line-through text-ink-400' : ''}`}>
+                  <p className={`font-body font-medium text-ink-900 dark:text-ink-100 truncate ${habit.completed_today ? 'line-through text-ink-400 dark:text-ink-500' : ''}`}>
                     {habit.title}
                   </p>
-                  <p className="text-xs text-ink-400 font-body mt-0.5">
+                  <p className="text-xs text-ink-400 dark:text-ink-500 font-body mt-0.5">
                     🏆 {habit.total_completions || 0} vezes completado
                   </p>
                 </div>
@@ -186,7 +186,7 @@ export default function DashboardPage() {
                              transition-all duration-200 active:scale-90 ${
                     habit.completed_today
                       ? 'bg-sage-500 border-sage-500 text-white shadow-sm'
-                      : 'border-ink-200 hover:border-sage-400 hover:bg-sage-50'
+                      : 'border-ink-200 hover:border-sage-400 hover:bg-sage-50 dark:border-ink-600 dark:hover:border-sage-500 dark:hover:bg-sage-900/20'
                   }`}>
                   {toggling === habit.id
                     ? <span className="text-sm animate-spin">⏳</span>
@@ -201,8 +201,8 @@ export default function DashboardPage() {
         </div>
 
         {/* Weekly chart */}
-        <div className="lg:col-span-2 card p-6">
-          <h2 className="font-display text-lg font-semibold text-ink-900 mb-6">Esta semana</h2>
+        <div className="lg:col-span-2 card-hover p-6">
+          <h2 className="font-display text-lg font-semibold text-ink-900 dark:text-ink-100 mb-6">Esta semana</h2>
           <div className="flex items-end justify-between gap-2 h-32">
             {weekData.map(day => (
               <div key={day.label} className="flex flex-col items-center gap-2 flex-1">
@@ -216,15 +216,15 @@ export default function DashboardPage() {
                     <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-amber-400 rounded-full" />
                   )}
                 </div>
-                <span className={`text-xs font-body ${day.isToday ? 'text-sage-600 font-semibold' : 'text-ink-400'}`}>
+                <span className={`text-xs font-body ${day.isToday ? 'text-sage-600 dark:text-sage-400 font-semibold' : 'text-ink-400 dark:text-ink-500'}`}>
                   {day.label}
                 </span>
               </div>
             ))}
           </div>
-          <div className="mt-4 pt-4 border-t border-ink-100 flex items-center justify-between text-xs font-body text-ink-400">
+          <div className="mt-4 pt-4 border-t border-ink-100 dark:border-ink-800 flex items-center justify-between text-xs font-body text-ink-400 dark:text-ink-500">
             <span>Total esta semana</span>
-            <span className="font-semibold text-ink-700">{weekData.reduce((a,b) => a + b.count, 0)} check-ins</span>
+            <span className="font-semibold text-ink-700 dark:text-ink-300">{weekData.reduce((a,b) => a + b.count, 0)} check-ins</span>
           </div>
         </div>
       </div>

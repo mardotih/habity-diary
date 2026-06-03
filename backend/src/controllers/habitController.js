@@ -71,16 +71,17 @@ const createHabit = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(422).json({ errors: errors.array() });
 
-  const { title, description, icon, color, frequency, target_days } = req.body;
+  const { title, description, icon, color, frequency, target_days, goal_type, goal_value } = req.body;
 
   try {
     // 3b: inserir na base de dados e devolver o registo criado
     const result = await query(
-      `INSERT INTO habits (user_id, title, description, icon, color, frequency, target_days)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
+      `INSERT INTO habits (user_id, title, description, icon, color, frequency, target_days, goal_type, goal_value)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
        RETURNING *`,
       [req.user.id, title.trim(), description || null, icon || '✅',
-       color || '#6366f1', frequency || 'daily', target_days || 7]
+       color || '#6366f1', frequency || 'daily', target_days || 7,
+       goal_type || 'daily', goal_value || 1]
     );
     res.status(201).json({ message: 'Habito criado!', habit: result.rows[0] });
   } catch (err) {
@@ -94,16 +95,18 @@ const updateHabit = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(422).json({ errors: errors.array() });
 
-  const { title, description, icon, color, frequency, target_days } = req.body;
+  const { title, description, icon, color, frequency, target_days, goal_type, goal_value } = req.body;
 
   try {
     const result = await query(
       `UPDATE habits
-       SET title=$1, description=$2, icon=$3, color=$4, frequency=$5, target_days=$6, updated_at=NOW()
-       WHERE id=$7 AND user_id=$8 AND is_active=true
+       SET title=$1, description=$2, icon=$3, color=$4, frequency=$5, target_days=$6,
+           goal_type=$7, goal_value=$8, updated_at=NOW()
+       WHERE id=$9 AND user_id=$10 AND is_active=true
        RETURNING *`,
       [title.trim(), description || null, icon || '✅', color || '#6366f1',
-       frequency || 'daily', target_days || 7, req.params.id, req.user.id]
+       frequency || 'daily', target_days || 7, goal_type || 'daily', goal_value || 1,
+       req.params.id, req.user.id]
     );
     if (!result.rows.length) return res.status(404).json({ error: 'Habito nao encontrado.' });
     res.json({ message: 'Habito actualizado!', habit: result.rows[0] });
@@ -208,12 +211,21 @@ const getStats = async (req, res) => {
        GROUP BY month ORDER BY month`, [userId]
     );
 
+    // 7f: dados diarios dos ultimos 6 meses (para calendario estilo GitHub)
+    const calendarData = await query(
+      `SELECT completed_date, COUNT(*) as count
+       FROM habit_completions WHERE user_id=$1
+       AND completed_date >= CURRENT_DATE - INTERVAL '6 months'
+       GROUP BY completed_date ORDER BY completed_date`, [userId]
+    );
+
     res.json({
       total_habits: parseInt(totalHabits.rows[0].count),
       today_completions: parseInt(todayCompletions.rows[0].count),
       week_completions: weekCompletions.rows,
       best_streak: streakData.rows[0]?.streak || 0,
-      monthly_data: monthlyData.rows
+      monthly_data: monthlyData.rows,
+      calendar_data: calendarData.rows
     });
   } catch (err) {
     console.error(err);

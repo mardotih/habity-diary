@@ -25,6 +25,8 @@ CREATE TABLE IF NOT EXISTS habits (
   color       VARCHAR(7)   DEFAULT '#6366f1',
   frequency   VARCHAR(20)  NOT NULL DEFAULT 'daily' CHECK (frequency IN ('daily', 'weekly')),
   target_days SMALLINT     DEFAULT 7,
+  goal_type   VARCHAR(10)  DEFAULT 'daily' CHECK (goal_type IN ('daily', 'weekly', 'monthly')),
+  goal_value  INTEGER      DEFAULT 1,
   is_active   BOOLEAN      DEFAULT TRUE,
   created_at  TIMESTAMP    DEFAULT NOW(),
   updated_at  TIMESTAMP    DEFAULT NOW()

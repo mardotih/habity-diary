@@ -87,8 +87,8 @@ export default function RemindersPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-display text-3xl font-bold text-ink-900">Lembretes</h1>
-          <p className="text-ink-400 text-sm font-body mt-1">Nunca esqueça os seus hábitos</p>
+          <h1 className="font-display text-3xl font-bold text-ink-900 dark:text-ink-100">Lembretes</h1>
+          <p className="text-ink-400 dark:text-ink-500 text-sm font-body mt-1">Nunca esqueça os seus hábitos</p>
         </div>
         <button onClick={() => setShowModal(true)} className="btn-primary flex items-center gap-2">
           <span>+</span> Novo lembrete
@@ -96,11 +96,11 @@ export default function RemindersPage() {
       </div>
 
       {/* Info banner */}
-      <div className="p-4 bg-amber-50 border border-amber-200 rounded-2xl flex items-start gap-3">
+      <div className="p-4 bg-amber-50 border border-amber-200 rounded-2xl dark:bg-amber-900/20 dark:border-amber-800/50 flex items-start gap-3">
         <span className="text-xl">🔔</span>
         <div>
-          <p className="text-sm font-semibold text-amber-800 font-body">Como funcionam os lembretes</p>
-          <p className="text-xs text-amber-700 font-body mt-1">
+          <p className="text-sm font-semibold text-amber-800 dark:text-amber-300 font-body">Como funcionam os lembretes</p>
+          <p className="text-xs text-amber-700 dark:text-amber-400 font-body mt-1">
             Os lembretes são processados pelo servidor a cada minuto. Em produção, seriam enviados por email ou notificação push. Aqui ficam registados no log do servidor.
           </p>
         </div>
@@ -114,8 +114,8 @@ export default function RemindersPage() {
       ) : reminders.length === 0 ? (
         <div className="card p-16 text-center">
           <div className="text-5xl mb-4">🔕</div>
-          <h2 className="font-display text-xl font-semibold text-ink-800 mb-2">Nenhum lembrete activo</h2>
-          <p className="text-ink-400 text-sm font-body mb-6">Configure lembretes para manter a consistência</p>
+          <h2 className="font-display text-xl font-semibold text-ink-800 dark:text-ink-200 mb-2">Nenhum lembrete activo</h2>
+          <p className="text-ink-400 dark:text-ink-500 text-sm font-body mb-6">Configure lembretes para manter a consistência</p>
           <button onClick={() => setShowModal(true)} className="btn-primary inline-flex items-center gap-2 mx-auto">
             <span>+</span> Criar lembrete
           </button>
@@ -123,18 +123,18 @@ export default function RemindersPage() {
       ) : (
         <div className="space-y-3">
           {reminders.map((r, i) => (
-            <div key={r.id} className={`card p-5 flex items-center gap-4 transition-all duration-300 animate-slide-up ${!r.is_active ? 'opacity-50' : ''}`}
+            <div key={r.id} className={`card-hover p-5 flex items-center gap-4 animate-slide-up ${!r.is_active ? 'opacity-50' : ''}`}
                  style={{ animationDelay: `${i * 60}ms` }}>
-              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0 ${r.is_active ? 'bg-amber-50' : 'bg-ink-100'}`}>
+              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0 ${r.is_active ? 'bg-amber-50 dark:bg-amber-900/30' : 'bg-ink-100 dark:bg-ink-800'}`}>
                 {r.habit_icon || '🔔'}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-body font-semibold text-ink-900 truncate">
+                <p className="font-body font-semibold text-ink-900 dark:text-ink-100 truncate">
                   {r.habit_title || r.label || 'Lembrete geral'}
                 </p>
                 <div className="flex items-center gap-3 mt-1">
-                  <span className="font-mono text-sm font-semibold text-sage-600">⏰ {r.reminder_time?.slice(0,5)}</span>
-                  <span className="text-xs text-ink-400 font-body">📅 {formatDays(r.days_of_week)}</span>
+                  <span className="font-mono text-sm font-semibold text-sage-600 dark:text-sage-400">⏰ {r.reminder_time?.slice(0,5)}</span>
+                  <span className="text-xs text-ink-400 dark:text-ink-500 font-body">📅 {formatDays(r.days_of_week)}</span>
                 </div>
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
@@ -144,7 +144,7 @@ export default function RemindersPage() {
                   <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${r.is_active ? 'translate-x-5' : ''}`} />
                 </button>
                 <button onClick={() => deleteReminder(r.id)}
-                  className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-50 text-ink-400 hover:text-red-600 transition-colors text-sm">
+                  className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30 text-ink-400 hover:text-red-600 dark:hover:text-red-400 transition-colors text-sm">
                   🗑️
                 </button>
               </div>
@@ -156,9 +156,9 @@ export default function RemindersPage() {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-ink-900/40 backdrop-blur-sm" onClick={() => setShowModal(false)} />
+          <div className="absolute inset-0 bg-ink-900/40 backdrop-blur-sm dark:bg-ink-950/60" onClick={() => setShowModal(false)} />
           <div className="relative card p-8 w-full max-w-md animate-slide-up">
-            <h2 className="font-display text-2xl font-bold text-ink-900 mb-6">Novo lembrete</h2>
+            <h2 className="font-display text-2xl font-bold text-ink-900 dark:text-ink-100 mb-6">Novo lembrete</h2>
             <form onSubmit={submit} className="space-y-5">
               <div>
                 <label className="label">Hábito (opcional)</label>
@@ -186,7 +186,7 @@ export default function RemindersPage() {
                     return (
                       <button type="button" key={day.value} onClick={() => toggleDay(day.value)}
                         className={`w-10 h-10 rounded-xl text-xs font-semibold font-body transition-all ${
-                          selected ? 'bg-ink-900 text-white shadow-sm' : 'bg-ink-100 text-ink-600 hover:bg-ink-200'
+                          selected ? 'bg-ink-900 text-white shadow-sm dark:bg-ink-200 dark:text-ink-900' : 'bg-ink-100 text-ink-600 hover:bg-ink-200 dark:bg-ink-800 dark:text-ink-300 dark:hover:bg-ink-700'
                         }`}>
                         {day.label}
                       </button>
@@ -195,11 +195,11 @@ export default function RemindersPage() {
                 </div>
                 <div className="flex gap-2 mt-2">
                   <button type="button" onClick={() => setForm(p => ({ ...p, days_of_week: '1,2,3,4,5,6,7' }))}
-                    className="text-xs text-sage-600 font-body hover:underline">Todos</button>
+                    className="text-xs text-sage-600 dark:text-sage-400 font-body hover:underline">Todos</button>
                   <button type="button" onClick={() => setForm(p => ({ ...p, days_of_week: '1,2,3,4,5' }))}
-                    className="text-xs text-sage-600 font-body hover:underline">Dias úteis</button>
+                    className="text-xs text-sage-600 dark:text-sage-400 font-body hover:underline">Dias úteis</button>
                   <button type="button" onClick={() => setForm(p => ({ ...p, days_of_week: '6,7' }))}
-                    className="text-xs text-sage-600 font-body hover:underline">Fim-de-semana</button>
+                    className="text-xs text-sage-600 dark:text-sage-400 font-body hover:underline">Fim-de-semana</button>
                 </div>
               </div>
               <div className="flex gap-3 pt-2">

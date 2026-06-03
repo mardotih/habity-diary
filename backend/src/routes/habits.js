@@ -12,7 +12,9 @@ const habitValidation = [
   body('title').trim().notEmpty().withMessage('Título é obrigatório.').isLength({ max: 200 }),
   body('frequency').optional().isIn(['daily', 'weekly']).withMessage('Frequência inválida.'),
   body('color').optional().matches(/^#[0-9A-Fa-f]{6}$/).withMessage('Cor inválida.'),
-  body('target_days').optional().isInt({ min: 1, max: 7 })
+  body('target_days').optional().isInt({ min: 1, max: 7 }),
+  body('goal_type').optional().isIn(['daily', 'weekly', 'monthly']).withMessage('Tipo de meta inválido.'),
+  body('goal_value').optional().isInt({ min: 1 }).withMessage('Valor da meta inválido.')
 ];
 
 router.get('/stats/summary', getStats);

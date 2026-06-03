@@ -1,6 +1,6 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const navItems = [
   { to: '/dashboard', icon: '🏠', label: 'Início' },
@@ -14,6 +14,13 @@ export default function Layout() {
   const { user, logout, isAdmin } = useAuth();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [dark, setDark] = useState(() => localStorage.getItem('hd_theme') === 'dark');
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (dark) { root.classList.add('dark'); localStorage.setItem('hd_theme', 'dark'); }
+    else { root.classList.remove('dark'); localStorage.setItem('hd_theme', 'light'); }
+  }, [dark]);
 
   const handleLogout = () => { logout(); navigate('/login'); };
 
@@ -22,26 +29,26 @@ export default function Layout() {
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
       {/* Logo */}
-      <div className="px-6 py-8 border-b border-ink-100">
+      <div className="px-6 py-8 border-b border-ink-100 dark:border-ink-800">
         <div className="flex items-center gap-3">
           <span className="text-2xl streak-fire">📖</span>
           <div>
-            <h1 className="font-display text-lg font-bold text-ink-900 leading-tight">Diário de</h1>
-            <h1 className="font-display text-lg font-bold text-sage-600 leading-tight">Hábitos</h1>
+            <h1 className="font-display text-lg font-bold text-ink-900 dark:text-ink-100 leading-tight">Diário de</h1>
+            <h1 className="font-display text-lg font-bold text-sage-600 dark:text-sage-400 leading-tight">Hábitos</h1>
           </div>
         </div>
       </div>
 
       {/* User */}
-      <div className="px-6 py-4 border-b border-ink-100">
+      <div className="px-6 py-4 border-b border-ink-100 dark:border-ink-800">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-semibold flex-shrink-0"
                style={{ backgroundColor: user?.avatar_color || '#6366f1' }}>
             {initials}
           </div>
           <div className="min-w-0">
-            <p className="text-sm font-medium text-ink-900 truncate">{user?.name}</p>
-            <p className="text-xs text-ink-400 truncate">{user?.role === 'admin' ? '👑 Admin' : '✨ Utilizador'}</p>
+            <p className="text-sm font-medium text-ink-900 dark:text-ink-100 truncate">{user?.name}</p>
+            <p className="text-xs text-ink-400 dark:text-ink-500 truncate">{user?.role === 'admin' ? '👑 Admin' : '✨ Utilizador'}</p>
           </div>
         </div>
       </div>
@@ -53,8 +60,8 @@ export default function Layout() {
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm font-medium ${
                 isActive
-                  ? 'bg-ink-900 text-ink-50 shadow-sm'
-                  : 'text-ink-600 hover:bg-ink-100 hover:text-ink-900'
+                  ? 'bg-ink-900 text-ink-50 shadow-sm dark:bg-ink-200 dark:text-ink-900'
+                  : 'text-ink-600 hover:bg-ink-100 hover:text-ink-900 dark:text-ink-400 dark:hover:bg-ink-800 dark:hover:text-ink-200'
               }`
             }>
             <span className="text-base">{item.icon}</span>
@@ -66,7 +73,7 @@ export default function Layout() {
           <NavLink to="/admin" onClick={() => setMobileOpen(false)}
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm font-medium ${
-                isActive ? 'bg-amber-500 text-white' : 'text-amber-600 hover:bg-amber-50'
+                isActive ? 'bg-amber-500 text-white' : 'text-amber-600 hover:bg-amber-50 dark:text-amber-400 dark:hover:bg-amber-900/30'
               }`
             }>
             <span className="text-base">⚙️</span>
@@ -75,11 +82,21 @@ export default function Layout() {
         )}
       </nav>
 
+      {/* Theme toggle */}
+      <div className="px-3 py-2 border-t border-ink-100">
+        <button onClick={() => setDark(p => !p)}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-ink-500
+                     hover:bg-ink-100 dark:hover:bg-ink-800 transition-all duration-200">
+          <span>{dark ? '☀️' : '🌙'}</span>
+          {dark ? 'Modo claro' : 'Modo escuro'}
+        </button>
+      </div>
+
       {/* Logout */}
       <div className="px-3 py-4 border-t border-ink-100">
         <button onClick={handleLogout}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-ink-500
-                     hover:bg-red-50 hover:text-red-600 transition-all duration-200">
+                     hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400 transition-all duration-200">
           <span>🚪</span> Sair
         </button>
       </div>
@@ -89,7 +106,7 @@ export default function Layout() {
   return (
     <div className="min-h-screen flex">
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex w-64 flex-shrink-0 bg-white border-r border-ink-100 fixed inset-y-0 left-0 z-30 flex-col">
+      <aside className="hidden lg:flex w-64 flex-shrink-0 bg-white dark:bg-ink-900 border-r border-ink-100 dark:border-ink-800 fixed inset-y-0 left-0 z-30 flex-col">
         <SidebarContent />
       </aside>
 
@@ -97,7 +114,7 @@ export default function Layout() {
       {mobileOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
           <div className="absolute inset-0 bg-ink-900/50" onClick={() => setMobileOpen(false)} />
-          <aside className="relative w-64 bg-white h-full flex flex-col shadow-xl animate-slide-up">
+          <aside className="relative w-64 bg-white dark:bg-ink-900 h-full flex flex-col shadow-xl animate-slide-up">
             <SidebarContent />
           </aside>
         </div>
@@ -106,7 +123,7 @@ export default function Layout() {
       {/* Main content */}
       <main className="flex-1 lg:ml-64">
         {/* Mobile topbar */}
-        <div className="lg:hidden sticky top-0 z-20 bg-white border-b border-ink-100 px-4 py-3 flex items-center justify-between">
+        <div className="lg:hidden sticky top-0 z-20 bg-white dark:bg-ink-900 border-b border-ink-100 dark:border-ink-800 px-4 py-3 flex items-center justify-between">
           <button onClick={() => setMobileOpen(true)} className="p-2 rounded-lg hover:bg-ink-100">
             <div className="space-y-1">
               <span className="block w-5 h-0.5 bg-ink-900" />

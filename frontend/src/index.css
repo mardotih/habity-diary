@@ -6,47 +6,61 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    @apply bg-ink-50 text-ink-900 font-body antialiased;
+    @apply bg-ink-50 text-ink-900 font-body antialiased dark:bg-ink-950 dark:text-ink-200;
     background-image:
       radial-gradient(circle at 20% 50%, rgba(107, 145, 116, 0.06) 0%, transparent 50%),
       radial-gradient(circle at 80% 20%, rgba(245, 158, 11, 0.05) 0%, transparent 50%);
     min-height: 100vh;
   }
 
+  .dark body {
+    background-image:
+      radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(245, 158, 11, 0.06) 0%, transparent 50%);
+  }
+
   h1, h2, h3 { @apply font-display; }
 
   ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { @apply bg-ink-100; }
-  ::-webkit-scrollbar-thumb { @apply bg-ink-300 rounded-full; }
-  ::-webkit-scrollbar-thumb:hover { @apply bg-ink-400; }
+  ::-webkit-scrollbar-track { @apply bg-ink-100 dark:bg-ink-800; }
+  ::-webkit-scrollbar-thumb { @apply bg-ink-300 rounded-full dark:bg-ink-600; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-ink-400 dark:bg-ink-500; }
 
-  ::selection { @apply bg-sage-400/30 text-ink-900; }
+  ::selection { @apply bg-sage-400/30 text-ink-900 dark:bg-sage-500/40 dark:text-white; }
 }
 
 @layer components {
+  .card-hover {
+    @apply card transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5;
+  }
   .btn-primary {
     @apply bg-ink-900 text-ink-50 px-6 py-2.5 rounded-lg font-body font-medium
            transition-all duration-200 hover:bg-ink-700 active:scale-95
-           disabled:opacity-50 disabled:cursor-not-allowed;
+           disabled:opacity-50 disabled:cursor-not-allowed
+           dark:bg-ink-200 dark:text-ink-900 dark:hover:bg-ink-300;
   }
   .btn-secondary {
     @apply border border-ink-300 text-ink-700 px-6 py-2.5 rounded-lg font-body font-medium
-           transition-all duration-200 hover:bg-ink-100 active:scale-95;
+           transition-all duration-200 hover:bg-ink-100 active:scale-95
+           dark:border-ink-600 dark:text-ink-300 dark:hover:bg-ink-800;
   }
   .btn-danger {
     @apply bg-red-600 text-white px-6 py-2.5 rounded-lg font-body font-medium
            transition-all duration-200 hover:bg-red-700 active:scale-95;
   }
   .card {
-    @apply bg-white rounded-2xl border border-ink-100 shadow-sm;
+    @apply bg-white rounded-2xl border border-ink-100 shadow-sm
+           dark:bg-ink-900 dark:border-ink-800 dark:shadow-ink-950/50;
   }
   .input-field {
     @apply w-full border border-ink-200 rounded-xl px-4 py-3 font-body text-ink-900
            focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-transparent
-           placeholder:text-ink-400 transition-all duration-200 bg-white;
+           placeholder:text-ink-400 transition-all duration-200 bg-white
+           dark:bg-ink-800 dark:border-ink-700 dark:text-ink-200 dark:placeholder:text-ink-500;
   }
   .label {
-    @apply block text-sm font-medium text-ink-700 mb-1.5 font-body;
+    @apply block text-sm font-medium text-ink-700 mb-1.5 font-body
+           dark:text-ink-300;
   }
   .badge {
     @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
@@ -82,3 +96,37 @@ body::before {
   from { transform: rotate(-5deg) scale(1); }
   to   { transform: rotate(5deg) scale(1.1); }
 }
+
+/* Page / section entrance animations */
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.35s ease-out;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-down {
+  animation: slideDown 0.3s ease-out;
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Staggered card entrance */
+.card-stagger > * {
+  animation: slideUp 0.4s ease-out both;
+}
+.card-stagger > *:nth-child(1) { animation-delay: 0ms; }
+.card-stagger > *:nth-child(2) { animation-delay: 80ms; }
+.card-stagger > *:nth-child(3) { animation-delay: 160ms; }
+.card-stagger > *:nth-child(4) { animation-delay: 240ms; }

@@ -76,21 +76,21 @@ export default function LoginPage() {
       </div>
 
       {/* Painel direito: formulario de login */}
-      <div className="flex-1 flex items-center justify-center p-6 bg-ink-50">
+      <div className="flex-1 flex items-center justify-center p-6 bg-ink-50 dark:bg-ink-950">
         <div className="w-full max-w-md animate-slide-up">
           {/* Logo (visivel apenas em ecra pequeno) */}
           <div className="lg:hidden text-center mb-8">
             <span className="text-4xl streak-fire">📖</span>
-            <h1 className="font-display text-2xl font-bold text-ink-900 mt-2">Diário de Hábitos</h1>
+            <h1 className="font-display text-2xl font-bold text-ink-900 dark:text-ink-100 mt-2">Diário de Hábitos</h1>
           </div>
 
           <div className="card p-8">
-            <h2 className="font-display text-2xl font-bold text-ink-900 mb-2">Bem-vindo de volta</h2>
-            <p className="text-ink-500 font-body text-sm mb-8">Entre na sua conta para continuar</p>
+            <h2 className="font-display text-2xl font-bold text-ink-900 dark:text-ink-100 mb-2">Bem-vindo de volta</h2>
+            <p className="text-ink-500 dark:text-ink-400 font-body text-sm mb-8">Entre na sua conta para continuar</p>
 
             {/* Mensagem de erro, se houver */}
             {error && (
-              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm font-body">
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 dark:bg-red-900/30 dark:border-red-800 dark:text-red-400 text-sm font-body">
                 ⚠️ {error}
               </div>
             )}
@@ -119,8 +119,8 @@ export default function LoginPage() {
             </form>
 
             {/* Link para registo */}
-            <div className="mt-6 pt-6 border-t border-ink-100 text-center">
-              <p className="text-sm text-ink-500 font-body">
+            <div className="mt-6 pt-6 border-t border-ink-100 dark:border-ink-800 text-center">
+              <p className="text-sm text-ink-500 dark:text-ink-400 font-body">
                 N&atilde;o tem conta?{' '}
                 <Link to="/register" className="text-sage-600 font-semibold hover:text-sage-500 transition-colors">
                   Criar conta gratuita
@@ -129,7 +129,7 @@ export default function LoginPage() {
             </div>
 
             {/* Credenciais de administrador para teste */}
-            <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 font-mono">
+            <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 dark:bg-amber-900/30 dark:border-amber-800 dark:text-amber-400 font-mono">
               🔑 Admin demo: admin@habitdiary.com / Admin@123
             </div>
           </div>

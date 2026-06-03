@@ -43,7 +43,7 @@ Aplicacao Web full-stack para acompanhar habitos diarios com lembretes automatic
 
 ```bash
 # 1. Clonar o repositorio
-git clone https://github.com/SEU_UTILIZADOR/habit-diary.git
+git clone https://github.com/mardotih/habity-diary
 cd habit-diary
 
 # 2. Iniciar todos os servicos

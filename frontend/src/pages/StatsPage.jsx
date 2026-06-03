@@ -4,6 +4,7 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   LineChart, Line, CartesianGrid, PieChart, Pie, Cell, Legend
 } from 'recharts';
+import HabitCalendar from '../components/HabitCalendar';
 
 const COLORS_PIE = ['#52796f', '#84a98c', '#cad2c5', '#f59e0b', '#6366f1'];
 
@@ -52,9 +53,9 @@ export default function StatsPage() {
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="card px-3 py-2 text-sm font-body border border-ink-200 shadow-lg">
-          <p className="text-ink-600 font-semibold">{label}</p>
-          <p className="text-sage-600">{payload[0].value} check-ins</p>
+        <div className="card px-3 py-2 text-sm font-body border border-ink-200 dark:border-ink-700 shadow-lg">
+          <p className="text-ink-600 dark:text-ink-300 font-semibold">{label}</p>
+          <p className="text-sage-600 dark:text-sage-400">{payload[0].value} check-ins</p>
         </div>
       );
     }
@@ -64,19 +65,19 @@ export default function StatsPage() {
   return (
     <div className="max-w-5xl mx-auto space-y-8 animate-fade-in">
       <div>
-        <h1 className="font-display text-3xl font-bold text-ink-900">Estatísticas</h1>
-        <p className="text-ink-400 text-sm font-body mt-1">Acompanhe o seu progresso ao longo do tempo</p>
+        <h1 className="font-display text-3xl font-bold text-ink-900 dark:text-ink-100">Estatísticas</h1>
+        <p className="text-ink-400 dark:text-ink-500 text-sm font-body mt-1">Acompanhe o seu progresso ao longo do tempo</p>
       </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: 'Hábitos activos', value: stats?.total_habits || 0, icon: '📚', bg: 'bg-ink-900', text: 'text-white' },
+          { label: 'Hábitos activos', value: stats?.total_habits || 0, icon: '📚', bg: 'bg-ink-900 dark:bg-ink-200', text: 'text-white dark:text-ink-900' },
           { label: 'Concluídos hoje', value: stats?.today_completions || 0, icon: '✅', bg: 'bg-sage-600', text: 'text-white' },
           { label: 'Total check-ins', value: monthlyData.reduce((a,b) => a + b.total, 0), icon: '🔥', bg: 'bg-amber-500', text: 'text-white' },
-          { label: 'Taxa hoje', value: `${completionRate}%`, icon: '📈', bg: 'bg-white border border-ink-100', text: 'text-ink-900' },
+          { label: 'Taxa hoje', value: `${completionRate}%`, icon: '📈', bg: 'bg-white border border-ink-100 dark:bg-ink-900 dark:border-ink-800', text: 'text-ink-900 dark:text-ink-200' },
         ].map(card => (
-          <div key={card.label} className={`rounded-2xl p-5 ${card.bg}`}>
+          <div key={card.label} className={`rounded-2xl p-5 ${card.bg} transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5`}>
             <div className="text-2xl mb-3">{card.icon}</div>
             <p className={`font-display text-2xl font-bold ${card.text}`}>{card.value}</p>
             <p className={`text-xs font-body mt-1 ${card.text} opacity-70`}>{card.label}</p>
@@ -86,7 +87,7 @@ export default function StatsPage() {
 
       {/* Weekly bar chart */}
       <div className="card p-6">
-        <h2 className="font-display text-lg font-semibold text-ink-900 mb-6">Check-ins — Últimos 7 dias</h2>
+        <h2 className="font-display text-lg font-semibold text-ink-900 dark:text-ink-100 mb-6">Check-ins — Últimos 7 dias</h2>
         <ResponsiveContainer width="100%" height={200}>
           <BarChart data={weekData} barSize={32}>
             <XAxis dataKey="dia" tick={{ fontSize: 12, fontFamily: 'DM Sans', fill: '#8c7f6a' }} axisLine={false} tickLine={false} />
@@ -104,9 +105,9 @@ export default function StatsPage() {
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Monthly line chart */}
         <div className="card p-6">
-          <h2 className="font-display text-lg font-semibold text-ink-900 mb-6">Evolução mensal</h2>
+          <h2 className="font-display text-lg font-semibold text-ink-900 dark:text-ink-100 mb-6">Evolução mensal</h2>
           {monthlyData.length === 0 ? (
-            <div className="h-40 flex items-center justify-center text-ink-300 text-sm font-body">
+            <div className="h-40 flex items-center justify-center text-ink-300 dark:text-ink-600 text-sm font-body">
               Sem dados suficientes ainda
             </div>
           ) : (
@@ -125,9 +126,9 @@ export default function StatsPage() {
 
         {/* Pie chart — top habits */}
         <div className="card p-6">
-          <h2 className="font-display text-lg font-semibold text-ink-900 mb-6">Top hábitos</h2>
+          <h2 className="font-display text-lg font-semibold text-ink-900 dark:text-ink-100 mb-6">Top hábitos</h2>
           {pieData.length === 0 ? (
-            <div className="h-40 flex items-center justify-center text-ink-300 text-sm font-body">
+            <div className="h-40 flex items-center justify-center text-ink-300 dark:text-ink-600 text-sm font-body">
               Complete hábitos para ver aqui
             </div>
           ) : (
@@ -146,24 +147,30 @@ export default function StatsPage() {
         </div>
       </div>
 
+      {/* GitHub-style calendar */}
+      <div className="card p-6">
+        <h2 className="font-display text-lg font-semibold text-ink-900 dark:text-ink-100 mb-4">Calendário de hábitos</h2>
+        <HabitCalendar data={stats?.calendar_data || []} months={6} />
+      </div>
+
       {/* Habits ranking */}
       {habits.length > 0 && (
         <div className="card p-6">
-          <h2 className="font-display text-lg font-semibold text-ink-900 mb-5">Ranking de hábitos</h2>
+          <h2 className="font-display text-lg font-semibold text-ink-900 dark:text-ink-100 mb-5">Ranking de hábitos</h2>
           <div className="space-y-3">
             {[...habits].sort((a, b) => (b.total_completions || 0) - (a.total_completions || 0)).map((h, i) => {
               const maxC = Math.max(...habits.map(x => x.total_completions || 0), 1);
               const pct = Math.round(((h.total_completions || 0) / maxC) * 100);
               return (
                 <div key={h.id} className="flex items-center gap-4">
-                  <span className="w-6 text-sm font-mono text-ink-400 text-right">#{i+1}</span>
+                  <span className="w-6 text-sm font-mono text-ink-400 dark:text-ink-500 text-right">#{i+1}</span>
                   <span className="text-xl">{h.icon}</span>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-body font-medium text-ink-800 truncate">{h.title}</span>
-                      <span className="text-xs font-mono text-ink-500 ml-2 flex-shrink-0">{h.total_completions || 0}×</span>
+                      <span className="text-sm font-body font-medium text-ink-800 dark:text-ink-200 truncate">{h.title}</span>
+                      <span className="text-xs font-mono text-ink-500 dark:text-ink-400 ml-2 flex-shrink-0">{h.total_completions || 0}×</span>
                     </div>
-                    <div className="h-1.5 bg-ink-100 rounded-full overflow-hidden">
+                    <div className="h-1.5 bg-ink-100 dark:bg-ink-800 rounded-full overflow-hidden">
                       <div className="h-full rounded-full transition-all duration-700"
                            style={{ width: `${pct}%`, backgroundColor: h.color || '#52796f' }} />
                     </div>

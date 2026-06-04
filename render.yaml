@@ -1,0 +1,47 @@
+services:
+  - type: web
+    name: habit-diary-api
+    env: node
+    region: frankfurt
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "4000"
+      - key: DB_HOST
+        fromDatabase:
+          name: habit-diary-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: habit-diary-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: habit-diary-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: habit-diary-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: habit-diary-db
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: FRONTEND_URL
+        sync: false
+
+databases:
+  - name: habit-diary-db
+    region: frankfurt
+    plan: free
+    databaseName: habit_diary
+    user: habit_user

@@ -10,6 +10,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { extractApiError } from '../utils/error';
 
 export default function LoginPage() {
   // Hook de autenticacao (login, register, logout, user, loading)
@@ -37,8 +38,7 @@ export default function LoginPage() {
       // Passo 2: redirecionar para o dashboard
       navigate('/dashboard');
     } catch (err) {
-      // Passo 3: mostrar erro (credenciais invalidas, servidor offline, etc.)
-      setError(err.response?.data?.error || 'Erro ao entrar. Verifique as credenciais.');
+      setError(extractApiError(err));
     } finally {
       setLoading(false);
     }

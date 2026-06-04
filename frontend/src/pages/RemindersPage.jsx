@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { remindersApi, habitsApi } from '../services/api';
+import { extractApiError } from '../utils/error';
 
 const DAYS = [
   { label: 'Seg', value: 1 }, { label: 'Ter', value: 2 }, { label: 'Qua', value: 3 },
@@ -25,7 +26,7 @@ export default function RemindersPage() {
       const [rRes, hRes] = await Promise.all([remindersApi.list(), habitsApi.list()]);
       setReminders(rRes.data.reminders);
       setHabits(hRes.data.habits);
-    } catch { showToast('Erro ao carregar.', 'error'); }
+    } catch (err) { showToast(extractApiError(err), 'error'); }
     finally { setLoading(false); }
   }, []);
 
@@ -50,7 +51,7 @@ export default function RemindersPage() {
       setShowModal(false);
       setForm(DEFAULT_FORM);
     } catch (err) {
-      showToast(err.response?.data?.error || 'Erro ao criar.', 'error');
+      showToast(extractApiError(err), 'error');
     } finally { setSaving(false); }
   };
 
@@ -58,7 +59,7 @@ export default function RemindersPage() {
     try {
       const res = await remindersApi.update(r.id, { ...r, is_active: !r.is_active });
       setReminders(prev => prev.map(x => x.id === r.id ? res.data.reminder : x));
-    } catch { showToast('Erro ao actualizar.', 'error'); }
+    } catch (err) { showToast(extractApiError(err), 'error'); }
   };
 
   const deleteReminder = async (id) => {
@@ -66,7 +67,7 @@ export default function RemindersPage() {
       await remindersApi.delete(id);
       setReminders(prev => prev.filter(r => r.id !== id));
       showToast('Lembrete eliminado.');
-    } catch { showToast('Erro ao eliminar.', 'error'); }
+    } catch (err) { showToast(extractApiError(err), 'error'); }
     setConfirmDelete(null);
   };
 

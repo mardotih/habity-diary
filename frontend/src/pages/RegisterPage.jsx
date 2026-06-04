@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { extractApiError } from '../utils/error';
 
 export default function RegisterPage() {
   const { register } = useAuth();
@@ -21,7 +22,7 @@ export default function RegisterPage() {
       await register(form.name, form.email, form.password);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.error || 'Erro ao criar conta.');
+      setError(extractApiError(err));
     } finally {
       setLoading(false);
     }
@@ -68,7 +69,7 @@ export default function RegisterPage() {
                     <div key={i} className={`h-1 flex-1 rounded-full transition-colors duration-300 ${
                       i <= strength
                         ? strength === 1 ? 'bg-red-400' : strength === 2 ? 'bg-amber-400' : 'bg-sage-500'
-                        : 'bg-ink-200'
+                        : 'bg-ink-200 dark:bg-ink-700'
                     }`} />
                   ))}
                 </div>

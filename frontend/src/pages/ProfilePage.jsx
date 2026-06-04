@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { authApi } from '../services/api';
+import { extractApiError } from '../utils/error';
 
 export default function ProfilePage() {
   const { user, logout } = useAuth();
@@ -23,7 +24,7 @@ export default function ProfilePage() {
       showToast('Perfil actualizado com sucesso!');
       setForm(p => ({ ...p, password: '', confirm: '' }));
     } catch (err) {
-      showToast(err.response?.data?.error || 'Erro ao actualizar.', 'error');
+      showToast(extractApiError(err), 'error');
     } finally { setSaving(false); }
   };
 

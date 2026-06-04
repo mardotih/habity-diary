@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { habitsApi } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { extractApiError } from '../utils/error';
 
 const TODAY = new Date().toISOString().split('T')[0];
 
@@ -30,7 +31,7 @@ export default function DashboardPage() {
       const [hRes, sRes] = await Promise.all([habitsApi.list(), habitsApi.stats()]);
       setHabits(hRes.data.habits);
       setStats(sRes.data);
-    } catch { /* silent */ }
+    } catch (err) { showToast(extractApiError(err), 'error'); }
     finally { setLoading(false); }
   }, []);
 
@@ -49,7 +50,7 @@ export default function DashboardPage() {
       } else {
         setStats(prev => prev ? { ...prev, today_completions: Math.max(0, (prev.today_completions || 1) - 1) } : prev);
       }
-    } catch { showToast('Erro ao registar.', 'error'); }
+    } catch (err) { showToast(extractApiError(err), 'error'); }
     finally { setToggling(null); }
   };
 

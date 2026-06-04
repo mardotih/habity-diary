@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { adminApi } from '../services/api';
+import { extractApiError } from '../utils/error';
 
 export default function AdminPage() {
   const [stats, setStats] = useState(null);
@@ -14,7 +15,7 @@ export default function AdminPage() {
   useEffect(() => {
     Promise.all([adminApi.stats(), adminApi.users()])
       .then(([s, u]) => { setStats(s.data); setUsers(u.data.users); })
-      .catch(() => showToast('Erro ao carregar dados.', 'error'))
+      .catch(err => showToast(extractApiError(err), 'error'))
       .finally(() => setLoading(false));
   }, []);
 
@@ -23,8 +24,7 @@ export default function AdminPage() {
       const res = await adminApi.toggleUser(id);
       setUsers(prev => prev.map(u => u.id === id ? { ...u, is_active: res.data.user.is_active } : u));
       showToast(res.data.message);
-    } catch (err) { showToast(err.response?.data?.error || 'Erro.', 'error'); }
-    setConfirmAction(null);
+    } catch (err) { showToast(extractApiError(err), 'error'); }
   };
 
   const changeRole = async (id, role) => {
@@ -32,7 +32,7 @@ export default function AdminPage() {
       await adminApi.changeRole(id, role);
       setUsers(prev => prev.map(u => u.id === id ? { ...u, role } : u));
       showToast('Role actualizado!');
-    } catch (err) { showToast(err.response?.data?.error || 'Erro.', 'error'); }
+    } catch (err) { showToast(extractApiError(err), 'error'); }
     setConfirmAction(null);
   };
 

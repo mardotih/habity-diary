@@ -9,6 +9,7 @@
 
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { authApi } from '../services/api';
+import { extractApiError } from '../utils/error';
 
 // Cria o contexto (inicialmente null)
 const AuthContext = createContext(null);
@@ -17,8 +18,14 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   // Passo 1: Estado do utilizador (restaurado do localStorage se existir)
   const [user, setUser] = useState(() => {
-    const stored = localStorage.getItem('hd_user');
-    return stored ? JSON.parse(stored) : null;
+    try {
+      const stored = localStorage.getItem('hd_user');
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      localStorage.removeItem('hd_user');
+      localStorage.removeItem('hd_token');
+      return null;
+    }
   });
 
   // Passo 2: Estado de loading (enquanto valida o token no arranque)
@@ -49,34 +56,30 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
+  // Guarda token e user no localStorage e estado, com validacao
+  const saveAuth = (token, user) => {
+    if (!token || !user) throw new Error('Resposta inválida do servidor.');
+    localStorage.setItem('hd_token', token);
+    localStorage.setItem('hd_user', JSON.stringify(user));
+    setUser(user);
+  };
+
   // Passo 4: Funcao de login
   const login = useCallback(async (email, password) => {
     // 4a: envia credenciais para o backend
     const res = await authApi.login({ email, password });
-    const { token, user } = res.data;
-
-    // 4b: guarda token e dados do utilizador no localStorage
-    localStorage.setItem('hd_token', token);
-    localStorage.setItem('hd_user', JSON.stringify(user));
-
-    // 4c: atualiza o estado global
-    setUser(user);
-    return user;
+    // 4b: guarda token e dados do utilizador
+    saveAuth(res.data.token, res.data.user);
+    return res.data.user;
   }, []);
 
   // Passo 5: Funcao de registo
   const register = useCallback(async (name, email, password) => {
     // 5a: envia dados de registo para o backend
     const res = await authApi.register({ name, email, password });
-    const { token, user } = res.data;
-
-    // 5b: guarda token e dados no localStorage
-    localStorage.setItem('hd_token', token);
-    localStorage.setItem('hd_user', JSON.stringify(user));
-
-    // 5c: atualiza o estado global
-    setUser(user);
-    return user;
+    // 5b: guarda token e dados do utilizador
+    saveAuth(res.data.token, res.data.user);
+    return res.data.user;
   }, []);
 
   // Passo 6: Funcao de logout

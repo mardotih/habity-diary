@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { habitsApi } from '../services/api';
+import { extractApiError } from '../utils/error';
 
 const ICONS = ['✅','🏃','📚','💧','🧘','💪','🥗','😴','✍️','🎯','🎨','🎵','🌿','🧹','💊','🚴','🌅','🙏'];
 const COLORS = ['#6366f1','#ec4899','#14b8a6','#f59e0b','#22c55e','#3b82f6','#8b5cf6','#f97316','#06b6d4','#84cc16'];
@@ -23,7 +24,7 @@ export default function HabitsPage() {
     try {
       const res = await habitsApi.list();
       setHabits(res.data.habits);
-    } catch { showToast('Erro ao carregar hábitos.', 'error'); }
+    } catch (err) { showToast(extractApiError(err), 'error'); }
     finally { setLoading(false); }
   }, []);
 
@@ -51,7 +52,7 @@ export default function HabitsPage() {
       }
       closeModal();
     } catch (err) {
-      showToast(err.response?.data?.error || 'Erro ao guardar.', 'error');
+      showToast(extractApiError(err), 'error');
     } finally { setSaving(false); }
   };
 
@@ -61,7 +62,7 @@ export default function HabitsPage() {
       await habitsApi.delete(id);
       setHabits(prev => prev.filter(h => h.id !== id));
       showToast('Hábito eliminado.');
-    } catch { showToast('Erro ao eliminar.', 'error'); }
+    } catch (err) { showToast(extractApiError(err), 'error'); }
     finally { setDeleting(null); setConfirmDelete(null); }
   };
 
